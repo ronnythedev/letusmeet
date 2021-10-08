@@ -21,7 +21,7 @@ function AuthFooter(props) {
     <div className={classes.root}>
       {props.type === "signup" && (
         <>
-          Have an account already?
+          ¿Ya tienes una cuenta?
           <LinkMui component={Link} to="/auth/signin">
             {props.typeValues.linkTextSignin}
           </LinkMui>

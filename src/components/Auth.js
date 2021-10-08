@@ -38,9 +38,9 @@ function Auth(props) {
           {props.providers && props.providers.length && (
             <>
               <Box textAlign="center" fontSize={12} my={2}>
-                OR
+                O
               </Box>
-              <AuthSocial
+              {/* <AuthSocial
                 type={props.type}
                 buttonText={props.typeValues.buttonText}
                 providers={props.providers}
@@ -52,7 +52,7 @@ function Auth(props) {
                     message: message,
                   });
                 }}
-              />
+              /> */}
             </>
           )}
 

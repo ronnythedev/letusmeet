@@ -14,13 +14,11 @@ function AuthForm(props) {
   const submitHandlersByType = {
     signin: ({ email, pass }) => {
       return auth.signin(email, pass).then((user) => {
-        // Call auth complete handler
         props.onAuth(user);
       });
     },
-    signup: ({ email, pass }) => {
-      return auth.signup(email, pass).then((user) => {
-        // Call auth complete handler
+    signup: ({ firstName, lastName, email, pass }) => {
+      return auth.signup(firstName, lastName, email, pass).then((user) => {
         props.onAuth(user);
       });
     },
@@ -30,7 +28,7 @@ function AuthForm(props) {
         // Show success alert message
         props.onFormAlert({
           type: "success",
-          message: "Password reset email sent",
+          message: "Se envió un email para restablecer el password",
         });
       });
     },
@@ -40,19 +38,21 @@ function AuthForm(props) {
         // Show success alert message
         props.onFormAlert({
           type: "success",
-          message: "Your password has been changed",
+          message: "Tu password se actualizó correctamente",
         });
       });
     },
   };
 
   // Handle form submission
-  const onSubmit = ({ email, pass }) => {
+  const onSubmit = ({ firstName, lastName, email, pass }) => {
     // Show pending indicator
     setPending(true);
 
     // Call submit handler for auth type
     submitHandlersByType[props.type]({
+      firstName,
+      lastName,
       email,
       pass,
     }).catch((error) => {
@@ -68,6 +68,42 @@ function AuthForm(props) {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Grid container={true} spacing={2}>
+        {["signup"].includes(props.type) && (
+          <Grid item={true} xs={12}>
+            <TextField
+              variant="outlined"
+              type="text"
+              label="Nombre"
+              name="firstName"
+              placeholder="Jose"
+              error={errors.firstName ? true : false}
+              helperText={errors.firstName && errors.firstName.message}
+              fullWidth={true}
+              inputRef={register({
+                required: "Por favor ingresa tu nombre",
+              })}
+            />
+          </Grid>
+        )}
+
+        {["signup"].includes(props.type) && (
+          <Grid item={true} xs={12}>
+            <TextField
+              variant="outlined"
+              type="text"
+              label="Apellido"
+              name="lastName"
+              placeholder="Rojas"
+              error={errors.lastName ? true : false}
+              helperText={errors.lastName && errors.lastName.message}
+              fullWidth={true}
+              inputRef={register({
+                required: "Por favor ingresa tu apellido",
+              })}
+            />
+          </Grid>
+        )}
+
         {["signup", "signin", "forgotpass"].includes(props.type) && (
           <Grid item={true} xs={12}>
             <TextField
@@ -75,12 +111,12 @@ function AuthForm(props) {
               type="email"
               label="Email"
               name="email"
-              placeholder="user@example.com"
+              placeholder="usuario@ejemplo.com"
               error={errors.email ? true : false}
               helperText={errors.email && errors.email.message}
               fullWidth={true}
               inputRef={register({
-                required: "Please enter your email",
+                required: "Por favor ingresa tu email",
               })}
             />
           </Grid>
@@ -97,7 +133,8 @@ function AuthForm(props) {
               helperText={errors.pass && errors.pass.message}
               fullWidth={true}
               inputRef={register({
-                required: "Please enter a password",
+                required: "Por favor ingresa tu password",
+                minLength: 6,
               })}
             />
           </Grid>
@@ -108,18 +145,18 @@ function AuthForm(props) {
             <TextField
               variant="outlined"
               type="password"
-              label="Confirm Password"
+              label="Confirmar Password"
               name="confirmPass"
               error={errors.confirmPass ? true : false}
               helperText={errors.confirmPass && errors.confirmPass.message}
               fullWidth={true}
               inputRef={register({
-                required: "Please enter your password again",
+                required: "Por favor ingresa tu password otra vez",
                 validate: (value) => {
                   if (value === getValues().pass) {
                     return true;
                   } else {
-                    return "This doesn't match your password";
+                    return "No concuerda con tu password";
                   }
                 },
               })}

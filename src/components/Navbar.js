@@ -80,7 +80,7 @@ function Navbar(props) {
             <Hidden xsDown={true} implementation="css">
               {!auth.user && (
                 <Button color="inherit" component={Link} to="/auth/signin">
-                  Sign in
+                  Ingresar
                 </Button>
               )}
 
@@ -95,7 +95,7 @@ function Navbar(props) {
                       handleOpenMenu(event, "account-menu");
                     }}
                   >
-                    Account
+                    Tu Cuenta
                     <ExpandMoreIcon className={classes.buttonIcon} />
                   </Button>
                   <Menu
@@ -120,11 +120,11 @@ function Navbar(props) {
                     }}
                   >
                     <MenuItem component={Link} to="/dashboard">
-                      Dashboard
+                      Pantalla Principal
                     </MenuItem>
 
                     <MenuItem component={Link} to="/settings/general">
-                      Settings
+                      Configuración
                     </MenuItem>
 
                     <Divider />
@@ -133,7 +133,7 @@ function Navbar(props) {
                         auth.signout();
                       }}
                     >
-                      Signout
+                      Salir
                     </MenuItem>
                   </Menu>
                 </>
@@ -163,18 +163,18 @@ function Navbar(props) {
         >
           {!auth.user && (
             <ListItem button={true} component={Link} to="/auth/signin">
-              <ListItemText>Sign in</ListItemText>
+              <ListItemText>Ingresar</ListItemText>
             </ListItem>
           )}
 
           {auth.user && (
             <>
               <ListItem button={true} component={Link} to="/dashboard">
-                <ListItemText>Dashboard</ListItemText>
+                <ListItemText>Pantalla Principal</ListItemText>
               </ListItem>
 
               <ListItem button={true} component={Link} to="/settings/general">
-                <ListItemText>Settings</ListItemText>
+                <ListItemText>Configuración</ListItemText>
               </ListItem>
 
               <Divider />
@@ -184,7 +184,7 @@ function Navbar(props) {
                   auth.signout();
                 }}
               >
-                <ListItemText>Sign out</ListItemText>
+                <ListItemText>Salir</ListItemText>
               </ListItem>
             </>
           )}
