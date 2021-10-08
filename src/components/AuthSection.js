@@ -9,25 +9,25 @@ function AuthSection(props) {
   const allTypeValues = {
     signin: {
       // Top title
-      title: "Welcome back",
+      title: "Bienvenido",
       // Submit button text
-      buttonText: "Sign in",
+      buttonText: "Ingresar",
       // Link text to other auth types
-      linkTextSignup: "Create an account",
-      linkTextForgotpass: "Forgot Password?",
+      linkTextSignup: "Crear una cuenta",
+      linkTextForgotpass: "¿Olvidaste el Password?",
     },
     signup: {
-      title: "Get yourself an account",
-      buttonText: "Sign up",
-      linkTextSignin: "Sign in",
+      title: "Créate una cuenta",
+      buttonText: "Crear cuenta",
+      linkTextSignin: "Ingresar",
     },
     forgotpass: {
-      title: "Get a new password",
-      buttonText: "Reset password",
+      title: "Créate un nuevo password",
+      buttonText: "Restablecer password",
     },
     changepass: {
-      title: "Choose a new password",
-      buttonText: "Change password",
+      title: "Selecciona un password nuevo",
+      buttonText: "Cambiar password",
     },
   };
 

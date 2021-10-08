@@ -1,9 +1,7 @@
-import fakeAuth from "fake-auth";
-
 export function apiRequest(path, method = "GET", data) {
-  const accessToken = fakeAuth.getAccessToken();
+  const accessToken = localStorage.getItem("at");
 
-  return fetch(`/api/${path}`, {
+  return fetch(`${process.env.REACT_APP_API_BASE_URL}${path}`, {
     method: method,
     headers: {
       "Content-Type": "application/json",
@@ -13,15 +11,13 @@ export function apiRequest(path, method = "GET", data) {
   })
     .then((response) => response.json())
     .then((response) => {
-      if (response.status === "error") {
+      if (!response.status === "error") {
         // Automatically signout user if accessToken is no longer valid
         if (response.code === "auth/invalid-user-token") {
-          fakeAuth.signout();
         }
-
         throw new CustomError(response.code, response.message);
       } else {
-        return response.data;
+        return response;
       }
     });
 }
