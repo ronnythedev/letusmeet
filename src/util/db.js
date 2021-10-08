@@ -16,7 +16,7 @@ export function useUser(uid) {
   // Unique cache key for this query
   const cacheKey = ["user", { uid }];
   // Query for fetching user
-  const query = () => apiRequest(`user/${uid}`);
+  const query = () => apiRequest(`user`);
   // Fetch with react-query (only if we have a uid)
   // Docs: https://react-query.tanstack.com/guides/queries
   return useQuery(cacheKey, query, { enabled: !!uid });
@@ -24,15 +24,15 @@ export function useUser(uid) {
 
 // Create a new user
 export function createUser(uid, data) {
-  return apiRequest("user", "POST", { uid, ...data });
+  //return apiRequest("user", "POST", { uid, ...data });
 }
 
 // Update an existing user
 export async function updateUser(uid, data) {
-  const response = await apiRequest(`user/${uid}`, "PATCH", data);
-  // Invalidate and refetch queries that could have old data
-  await queryClient.invalidateQueries(["user", { uid }]);
-  return response;
+  // const response = await apiRequest(`user/${uid}`, "PATCH", data);
+  // // Invalidate and refetch queries that could have old data
+  // await queryClient.invalidateQueries(["user", { uid }]);
+  // return response;
 }
 
 /**** ITEMS ****/

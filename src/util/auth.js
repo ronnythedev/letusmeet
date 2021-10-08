@@ -14,10 +14,11 @@ import { apiRequest } from "./util";
 
 import analytics from "./analytics";
 
+const jwt = require("jsonwebtoken");
 // Whether to merge extra user data from database into auth.user
 // Useful in case the user object returned by signin doesn't have all the required
 // information for the system
-const MERGE_DB_USER = false;
+const MERGE_DB_USER = true;
 
 // Whether to connect analytics session to user.uid
 const ANALYTICS_IDENTIFY = false;
@@ -137,6 +138,18 @@ function useAuthProvider() {
     setUser(currentUser);
   };
 
+  useEffect(() => {
+    const token = localStorage.getItem("at");
+    if (token) {
+      try {
+        var decoded = jwt.verify(token, process.env.REACT_APP_JWT_SECRET);
+        handleAuth({ id: decoded.uid, email: decoded.email, token: token });
+      } catch (err) {
+        signout();
+      }
+    }
+  }, []);
+
   return {
     user: finalUser,
     signup,
@@ -154,49 +167,52 @@ function useAuthProvider() {
 // Format final user object and merge extra data from database
 function usePrepareUser(user) {
   // Fetch extra data from database (if enabled and auth user has been fetched)
-  const userDbQuery = useUser(MERGE_DB_USER && user && user.uid);
+  const userDbQuery = useUser(MERGE_DB_USER && user && user.id);
 
   // Memoize so we only create a new object if user or userDbQuery changes
   return useMemo(() => {
     // Return if auth user is null (loading) or false (not authenticated)
     if (!user) return user;
 
-    // // Data we want to include from auth user object
-    // let finalUser = {
-    //   uid: user.uid,
-    //   email: user.email,
-    //   name: user.name,
-    //   picture: user.picture,
-    // };
-    let finalUser = user;
+    // Data we want to include from auth user object
+    let finalUser = {
+      id: user.id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      preferredLanguageCode: user.preferredLanguageCode,
+      isEmailConfirmed: user.isEmailConfirmed,
+      timeZoneId: user.timeZoneId,
+      uniqueLinkId: user.uniqueLinkId,
+    };
 
     // Include an array of user's auth providers, such as ["password", "google", etc]
     // Components can read this to prompt user to re-auth with the correct provider
     //finalUser.providers = [user.provider];
 
-    // // If merging user data from database is enabled ...
-    // if (MERGE_DB_USER) {
-    //   switch (userDbQuery.status) {
-    //     case "idle":
-    //       // Return null user until we have db data to merge
-    //       return null;
-    //     case "loading":
-    //       return null;
-    //     case "error":
-    //       // Log query error to console
-    //       console.error(userDbQuery.error);
-    //       return null;
-    //     case "success":
-    //       // If user data doesn't exist we assume this means user just signed up and the createUser
-    //       // function just hasn't completed. We return null to indicate a loading state.
-    //       if (userDbQuery.data === null) return null;
+    // If merging user data from database is enabled ...
+    if (MERGE_DB_USER) {
+      switch (userDbQuery.status) {
+        case "idle":
+          // Return null user until we have db data to merge
+          return null;
+        case "loading":
+          return null;
+        case "error":
+          // Log query error to console
+          console.error(userDbQuery.error);
+          return null;
+        case "success":
+          // If user data doesn't exist we assume this means user just signed up and the createUser
+          // function just hasn't completed. We return null to indicate a loading state.
+          if (userDbQuery.data === null) return null;
 
-    //       // Merge user data from database into finalUser object
-    //       Object.assign(finalUser, userDbQuery.data);
+          // Merge user data from database into finalUser object
+          Object.assign(finalUser, userDbQuery.data.user);
 
-    //     // no default
-    //   }
-    // }
+        // no default
+      }
+    }
 
     return finalUser;
   }, [user, userDbQuery]);
