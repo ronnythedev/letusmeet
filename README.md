@@ -7,6 +7,7 @@
    ```
 
 2. Update your `.env` file with values for each environment variable
+
    2.1 The URL where the backendAPI is listening
 
    ```
