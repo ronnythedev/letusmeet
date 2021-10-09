@@ -13,6 +13,10 @@ export function apiRequest(path, method = "GET", data) {
     .then((response) => {
       if (!response.status === "error") {
         // Automatically signout user if accessToken is no longer valid
+        // TODO: when the code is 403, signout the user automatically
+        // The challenge is that the user is inside a React hook (auth) therefore the signout
+        // method cannot be called from this util.
+        // May I want to change this util into a hook?
         if (response.code === "auth/invalid-user-token") {
         }
         throw new CustomError(response.code, response.message);
