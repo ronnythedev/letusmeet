@@ -8,7 +8,7 @@
    npm install
    ```
 
-2. Update your `.env` file with values for each environment variable
+2. Create a file named `.env` in the root of the project. Update it with the environment variables. You can review `.env.example` file as a referece. IMPORTANT: DO NOT CHANGE `.env.example` OR COMMIT IT TO SOURCE CONTROL, THIS IS JUST A REFERENCE FILE.
 
    2.1 The URL where the backendAPI is listening
 
