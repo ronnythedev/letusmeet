@@ -1,10 +1,10 @@
 import React from "react";
-import DashboardSection from "./../components/DashboardSection";
+import MyAvailableDates from "./../components/MyAvailableDates";
 import { requireAuth } from "./../util/auth.js";
 
 function DashboardPage(props) {
   return (
-    <DashboardSection
+    <MyAvailableDates
       bgColor="default"
       size="medium"
       bgImage=""

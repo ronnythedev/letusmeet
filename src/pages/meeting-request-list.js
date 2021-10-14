@@ -1,9 +1,9 @@
 import React from "react";
-import DashboardSection from "./../components/DashboardSection";
+import DashboardSection2 from "./../components/DashboardSection2";
 
 function MeetingRequestListPage(props) {
   return (
-    <DashboardSection
+    <DashboardSection2
       bgColor="default"
       size="medium"
       bgImage=""
