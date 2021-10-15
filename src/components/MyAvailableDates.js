@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Section from "./Section";
 import {
   Typography,
@@ -13,11 +13,70 @@ import { useAuth } from "../util/auth.js";
 import { useRouter } from "../util/router.js";
 import { makeStyles } from "@material-ui/core/styles";
 
-import DayHeader from "./DayHeader";
-
 const useStyles = makeStyles((theme) => ({
   cardContent: {
     padding: theme.spacing(3),
+  },
+  saveButtonWrapper: {
+    paddingTop: "10px",
+  },
+  customHeaderContainer: {
+    paddingTop: "30px",
+  },
+  customHeader: {
+    position: "sticky",
+    zIndex: 2,
+    top: "0px",
+    paddingBottom: "20px",
+    backgroundColor: theme.palette.background.default,
+  },
+  calendarWrapper: {
+    width: "100%",
+    display: "flex",
+    flexWrap: "wrap",
+    boxSizing: "border-box",
+  },
+  dayItem: {
+    display: "flex",
+    flexDirection: "column",
+    flexBasis: 0,
+    flexGrow: 1,
+    maxWidth: "100%",
+  },
+  dayColumn: {
+    display: "flex",
+    flexGrow: 1,
+    flexDirection: "column",
+  },
+  hourSlot: {
+    display: "flex",
+    flexGrow: 1,
+    flexDirection: "column",
+  },
+  hourButtonSelected: {
+    marginBottom: "5px",
+    fontSize: "10px",
+    //backgroundColor: theme.palette.primary.main, //"#3f51b5",
+    //color: theme.palette.background.default,
+    // "&:hover": {
+    //   color: "rgb(25, 118, 210)",
+    // },
+  },
+  hourButtonRegular: {
+    marginBottom: "5px",
+    fontSize: "10px",
+  },
+  dayHeader: {
+    top: "229px",
+    position: "sticky",
+    borderBottom: "1px solid #CBCBD6",
+    marginBottom: "8px",
+    paddingBottom: "16px",
+    zIndex: 1,
+    backgroundColor: theme.palette.background.default,
+    textAlign: "center",
+    fontWeight: "bold",
+    fontSize: "18px",
   },
 }));
 
@@ -55,88 +114,130 @@ function MyAvailableDates(props) {
     { text: "10:00 PM - 11:00 PM", key: "2200-2300" },
     { text: "11:00 PM - 12:00 AM", key: "2300-2400" },
   ];
+
+  const datesInitialState = [
+    "2-800-900",
+    "2-900-1000",
+    "2-1000-1100",
+    "2-1100-1200",
+    "2-1400-1500",
+    "2-1500-1600",
+    "2-1600-1700",
+    "3-800-900",
+    "3-900-1000",
+    "3-1000-1100",
+    "3-1100-1200",
+    "3-1400-1500",
+    "3-1500-1600",
+    "3-1600-1700",
+    "4-800-900",
+    "4-900-1000",
+    "4-1000-1100",
+    "4-1100-1200",
+    "4-1400-1500",
+    "4-1500-1600",
+    "4-1600-1700",
+    "5-800-900",
+    "5-900-1000",
+    "5-1000-1100",
+    "5-1100-1200",
+    "5-1400-1500",
+    "5-1500-1600",
+    "5-1600-1700",
+    "6-800-900",
+    "6-900-1000",
+    "6-1000-1100",
+    "6-1100-1200",
+    "6-1400-1500",
+    "6-1500-1600",
+    "6-1600-1700",
+  ];
+
+  const [selectedDates, setSelectedDates] = useState(datesInitialState);
+
+  const toggleSelectedDate = (currentDate) => {
+    let itemIndex = selectedDates.indexOf(currentDate);
+
+    if (itemIndex !== -1) {
+      setSelectedDates(selectedDates.filter((item) => item !== currentDate));
+    } else {
+      setSelectedDates([...selectedDates, currentDate]);
+    }
+  };
+
   return (
     <Section
+      className={classes.customHeaderContainer}
       bgColor={props.bgColor}
       size={props.size}
       bgImage={props.bgImage}
       bgImageOpacity={props.bgImageOpacity}
     >
       <Container>
-        <Box
-          style={{
-            position: "sticky",
-            zIndex: 2,
-            top: "0px",
-            paddingBottom: "40px",
-            backgroundColor: "white",
-          }}
-        >
+        <Box className={classes.customHeader} style={{}}>
           <SectionHeader
+            className={classes.customHeaderContainer}
             title={props.title}
             subtitle={props.subtitle}
             size={4}
             textAlign="center"
           />
+          <Box>
+            <div>
+              1. Selecciona tus horas disponibles para reunión por día de la
+              semana.
+            </div>
+            <div>2. Presiona "Guardar Mis Fechas".</div>
+            <div>
+              2. Comparte tu enlance para que los demás puedan solicitarte
+              reuniones.
+            </div>
+            <div className={classes.saveButtonWrapper}>
+              <Button variant="contained" color="primary">
+                Guardar Mis Fechas
+              </Button>
+            </div>
+          </Box>
         </Box>
         <Grid
           container
           columns={7}
           spacing={1}
-          style={{
-            width: "100%",
-            display: "flex",
-            flexWrap: "wrap",
-            boxSizing: "border-box",
-          }}
+          className={classes.calendarWrapper}
+          style={{}}
         >
           {weekDays.map((day) => {
             return (
-              <Grid
-                key={day.key}
-                item
-                xs
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  flexBasis: 0,
-                  flexGrow: 1,
-                  maxWidth: "100%",
-                }}
-              >
-                <Box
-                  style={{
-                    display: "flex",
-                    flexGrow: 1,
-                    flexDirection: "column",
-                  }}
-                >
-                  <Box
-                    style={{
-                      top: "80px",
-                      position: "sticky",
-                      borderBottom: "1px solid #CBCBD6",
-                      marginBottom: "8px",
-                      paddingBottom: "16px",
-                      zIndex: 1,
-                      backgroundColor: "white",
-                    }}
-                  >
+              <Grid key={day.key} item xs className={classes.dayItem}>
+                <Box className={classes.dayColumn} style={{}}>
+                  <Box className={classes.dayHeader} style={{}}>
                     <span>{day.text}</span>
                   </Box>
-                  <Box
-                    style={{
-                      display: "flex",
-                      flexGrow: 1,
-                      flexDirection: "column",
-                    }}
-                  >
+                  <Box className={classes.hourSlot}>
                     {hoursByDay.map((hour) => {
                       return (
                         <Button
-                          key={hour.key}
-                          variant="outlined"
-                          style={{ marginBottom: "5px" }}
+                          id={"btn-" + day.key + "-" + hour.key}
+                          key={"btn-" + day.key + "-" + hour.key}
+                          color="primary"
+                          variant={
+                            selectedDates.indexOf(
+                              String(day.key) + "-" + String(hour.key)
+                            ) !== -1
+                              ? "contained"
+                              : "outlined"
+                          }
+                          size="large"
+                          onClick={() => {
+                            toggleSelectedDate(day.key + "-" + hour.key);
+                          }}
+                          className={
+                            selectedDates.indexOf(
+                              String(day.key) + "-" + String(hour.key)
+                            ) !== -1
+                              ? classes.hourButtonSelected
+                              : classes.hourButtonRegular
+                          }
                         >
                           {hour.text}
                         </Button>
@@ -147,10 +248,6 @@ function MyAvailableDates(props) {
               </Grid>
             );
           })}
-
-          {/* {weekDays.map((day) => {
-            return <DayHeader key={"day-header" + String(day.key)} day={day} />;
-          })} */}
         </Grid>
       </Container>
     </Section>

@@ -120,7 +120,7 @@ function Navbar(props) {
                     }}
                   >
                     <MenuItem component={Link} to="/dashboard">
-                      Pantalla Principal
+                      Mis Fechas Disponibles
                     </MenuItem>
 
                     <MenuItem component={Link} to="/settings/general">
