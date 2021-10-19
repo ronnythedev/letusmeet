@@ -93,13 +93,13 @@ function Footer(props) {
           >
             <Typography>
               <Link to="/about" className={classes.link}>
-                About
+                Nosotros
               </Link>
               <Link to="/faq" className={classes.link}>
-                FAQ
+                Preguntas y Respuestas
               </Link>
               <Link to="/contact" className={classes.link}>
-                Contact
+                Contacto
               </Link>
               <a
                 href="https://medium.com"

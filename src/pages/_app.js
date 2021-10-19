@@ -82,8 +82,8 @@ function App(props) {
                 size="normal"
                 bgImage=""
                 bgImageOpacity={1}
-                description="A short description of what you do here"
-                copyright={`© ${new Date().getFullYear()} Company`}
+                description="Reuniones fáciles"
+                copyright={`© ${new Date().getFullYear()} LetUsMeet`}
                 logo="https://uploads.divjoy.com/logo.svg"
                 logoInverted="https://uploads.divjoy.com/logo-white.svg"
                 sticky={true}

@@ -7,18 +7,31 @@ import {
   Card,
   Button,
   Box,
+  OutlinedInput,
+  IconButton,
 } from "@material-ui/core";
+import EditImage from "@material-ui/icons/Edit";
+import SaveImage from "@material-ui/icons/Save";
+import ShareImage from "@material-ui/icons/Share";
 import SectionHeader from "./SectionHeader";
 import { useAuth } from "../util/auth.js";
 import { useRouter } from "../util/router.js";
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
+  uniqueUrl: {
+    marginTop: "5px",
+    fontSize: "24px",
+  },
+  hidden: {
+    display: "none",
+  },
   cardContent: {
     padding: theme.spacing(3),
   },
   saveButtonWrapper: {
     paddingTop: "10px",
+    textAlign: "center",
   },
   customHeaderContainer: {
     paddingTop: "30px",
@@ -56,18 +69,13 @@ const useStyles = makeStyles((theme) => ({
   hourButtonSelected: {
     marginBottom: "5px",
     fontSize: "10px",
-    //backgroundColor: theme.palette.primary.main, //"#3f51b5",
-    //color: theme.palette.background.default,
-    // "&:hover": {
-    //   color: "rgb(25, 118, 210)",
-    // },
   },
   hourButtonRegular: {
     marginBottom: "5px",
     fontSize: "10px",
   },
   dayHeader: {
-    top: "229px",
+    top: "249px",
     position: "sticky",
     borderBottom: "1px solid #CBCBD6",
     marginBottom: "8px",
@@ -154,6 +162,7 @@ function MyAvailableDates(props) {
   ];
 
   const [selectedDates, setSelectedDates] = useState(datesInitialState);
+  const [editingUrl, setEditingUrl] = useState(false);
 
   const toggleSelectedDate = (currentDate) => {
     let itemIndex = selectedDates.indexOf(currentDate);
@@ -183,14 +192,50 @@ function MyAvailableDates(props) {
             textAlign="center"
           />
           <Box>
-            <div>
-              1. Selecciona tus horas disponibles para reunión por día de la
-              semana.
+            <div style={{ fontSize: "16px", textAlign: "center" }}>
+              Tu enlace único:
             </div>
-            <div>2. Presiona "Guardar Mis Fechas".</div>
-            <div>
-              2. Comparte tu enlance para que los demás puedan solicitarte
-              reuniones.
+            <div
+              style={{
+                marginTop: "10px",
+                textAlign: "center",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <span className={classes.uniqueUrl}>
+                https://letusmeet/
+                <span className={editingUrl ? classes.hidden : null}>
+                  asdfasfasdf
+                </span>
+              </span>
+
+              <div
+                className={!editingUrl ? classes.hidden : null}
+                style={{ marginTop: "5px" }}
+              >
+                &nbsp;
+                <OutlinedInput id="standard-basic" variant="standard" />
+              </div>
+              <div>
+                &nbsp;
+                <IconButton
+                  color="primary"
+                  component="span"
+                  onClick={() => {
+                    setEditingUrl(!editingUrl);
+                  }}
+                >
+                  {editingUrl ? <SaveImage /> : <EditImage />}
+                </IconButton>
+              </div>
+              <div className={editingUrl ? classes.hidden : null}>
+                &nbsp;
+                <IconButton color="secondary" component="span">
+                  <ShareImage />
+                </IconButton>
+              </div>
             </div>
             <div className={classes.saveButtonWrapper}>
               <Button variant="contained" color="primary">
