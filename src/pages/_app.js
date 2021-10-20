@@ -29,8 +29,8 @@ function App(props) {
             <>
               <Navbar
                 color="default"
-                logo="https://uploads.divjoy.com/logo.svg"
-                logoInverted="https://uploads.divjoy.com/logo-white.svg"
+                logo="https://staging.files.eleadertech.com/ronny/lum3.png"
+                logoInverted="https://staging.files.eleadertech.com/ronny/lum3-white.png"
               />
 
               <Switch>
@@ -84,8 +84,8 @@ function App(props) {
                 bgImageOpacity={1}
                 description="Reuniones fáciles"
                 copyright={`© ${new Date().getFullYear()} LetUsMeet`}
-                logo="https://uploads.divjoy.com/logo.svg"
-                logoInverted="https://uploads.divjoy.com/logo-white.svg"
+                logo="https://staging.files.eleadertech.com/ronny/lum3.png"
+                logoInverted="https://staging.files.eleadertech.com/ronny/lum3-white.png"
                 sticky={true}
               />
             </>

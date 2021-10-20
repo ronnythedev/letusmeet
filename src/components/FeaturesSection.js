@@ -37,28 +37,41 @@ function FeaturesSection(props) {
 
   const items = [
     {
-      title: "Explore",
+      title: "1. Define tu Calendario",
       description:
-        "Integer ornare neque mauris, ac vulputate lacus venenatis et. Pellentesque ut ultrices purus.",
-      image: "https://uploads.divjoy.com/undraw-mind_map_cwng.svg",
+        "Selecciona los días y las horas de la semana en que estarás disponible para citas y reuniones.",
+      image: "https://staging.files.eleadertech.com/ronny/time.svg",
     },
     {
-      title: "Explore",
+      title: "2. Define tu Enlace Único",
       description:
-        "Integer ornare neque mauris, ac vulputate lacus venenatis et. Pellentesque ut ultrices purus.",
-      image: "https://uploads.divjoy.com/undraw-personal_settings_kihd.svg",
+        "Personaliza tu Enlace Único. Con este enlace, cualquier persona podrá ver tu calendario para solicitarte citas.",
+      image: "https://staging.files.eleadertech.com/ronny/unique-link.svg",
     },
     {
-      title: "Explore",
+      title: "3. Comparte tu Enlace Único",
       description:
-        "Integer ornare neque mauris, ac vulputate lacus venenatis et. Pellentesque ut ultrices purus.",
-      image: "https://uploads.divjoy.com/undraw-having_fun_iais.svg",
+        "Comparte tu Enlace Único donde quieras: bio de redes sociales, emails, tarjetas de presentación...",
+      image: "https://staging.files.eleadertech.com/ronny/social-girl.svg",
     },
     {
-      title: "Explore",
+      title: "4. Gestiona solicitudes",
       description:
-        "Integer ornare neque mauris, ac vulputate lacus venenatis et. Pellentesque ut ultrices purus.",
-      image: "https://uploads.divjoy.com/undraw-balloons_vxx5.svg",
+        "Acepta o declina solicitudes de citas con un clic. Tu mantienes el control de tu tiempo.",
+      image: "https://staging.files.eleadertech.com/ronny/switches.svg",
+    },
+    {
+      title: "5. Reúnete en Línea",
+      description:
+        "Por cada reunión que confirmes, te enviaremos un email con un enlace seguro para que hagas tu reunión con audio y video.",
+      image: "https://staging.files.eleadertech.com/ronny/online-meeting.svg",
+    },
+    {
+      title: "¡GRATIS SIEMPRE!",
+      description:
+        "Gracias a la tecnología que implementamos, tus reuniones con audio y video son GRATIS y SIN LÍMITE de tiempo. Y así será SIEMPRE. No necesitarás (ni tus clientes) instalar ningún software ni aplicación.",
+      image:
+        "https://staging.files.eleadertech.com/ronny/online-celebration.svg",
     },
   ];
 

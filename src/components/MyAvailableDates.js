@@ -19,6 +19,17 @@ import { useRouter } from "../util/router.js";
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
+  uniqueUrlTitle: {
+    fontSize: "16px",
+    textAlign: "center",
+  },
+  uniqueUrlContainer: {
+    marginTop: "10px",
+    textAlign: "center",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
   uniqueUrl: {
     marginTop: "5px",
     fontSize: "24px",
@@ -183,7 +194,7 @@ function MyAvailableDates(props) {
       bgImageOpacity={props.bgImageOpacity}
     >
       <Container>
-        <Box className={classes.customHeader} style={{}}>
+        <Box className={classes.customHeader}>
           <SectionHeader
             className={classes.customHeaderContainer}
             title={props.title}
@@ -192,18 +203,10 @@ function MyAvailableDates(props) {
             textAlign="center"
           />
           <Box>
-            <div style={{ fontSize: "16px", textAlign: "center" }}>
-              Tu enlace único:
+            <div className={classes.uniqueUrlTitle}>
+              Este es tu enlace único
             </div>
-            <div
-              style={{
-                marginTop: "10px",
-                textAlign: "center",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
+            <div className={classes.uniqueUrlContainer}>
               <span className={classes.uniqueUrl}>
                 https://letusmeet/
                 <span className={editingUrl ? classes.hidden : null}>

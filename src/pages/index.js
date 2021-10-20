@@ -12,27 +12,27 @@ function IndexPage(props) {
         size="medium"
         bgImage=""
         bgImageOpacity={1}
-        title="Your landing page title here"
-        subtitle="This landing page is perfect for showing off your awesome product and driving people to sign up for a paid plan."
-        image="https://uploads.divjoy.com/undraw-japan_ubgk.svg"
-        buttonText="Get Started"
+        title="Reuniones en línea fáciles y gratis"
+        subtitle="Con nuestra solución podrás gestionar tu calendario, confirmar citas y hacer reuniones en línea gratis y sin límites de tiempo."
+        image="https://staging.files.eleadertech.com/ronny/main2.jpg"
+        buttonText="Iniciar"
         buttonColor="primary"
-        buttonPath="/pricing"
+        buttonPath="/auth/singin"
       />
       <FeaturesSection
         bgColor="default"
         size="medium"
         bgImage=""
         bgImageOpacity={1}
-        title="Features"
-        subtitle="All the features you need to move faster"
+        title="¿Cómo funciona?"
+        subtitle="5 Simples Pasos"
       />
       <TestimonialsSection
         bgColor="light"
         size="medium"
         bgImage=""
         bgImageOpacity={1}
-        title="Here's what people are saying"
+        title="Esto es lo que dicen de nosotros"
         subtitle=""
       />
       <NewsletterSection
@@ -40,12 +40,12 @@ function IndexPage(props) {
         size="medium"
         bgImage=""
         bgImageOpacity={1}
-        title="Stay in the know"
-        subtitle="Receive our latest articles and feature updates"
-        buttonText="Subscribe"
+        title="Mantente Informado"
+        subtitle="Recibe nuestros últimos artículos y actualizaciones"
+        buttonText="Suscribir"
         buttonColor="primary"
-        inputPlaceholder="Enter your email"
-        subscribedMessage="You are now subscribed!"
+        inputPlaceholder="Ingresa tu email"
+        subscribedMessage="¡Ya estás suscrito!"
       />
     </>
   );
