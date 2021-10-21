@@ -60,7 +60,7 @@ function App(props) {
 
                 <Route
                   exact
-                  path="/available-dates/:userid"
+                  path="/available-dates/:userurl"
                   component={AvailableDatesPage}
                 />
 

@@ -1,14 +1,14 @@
 import React from "react";
-import DashboardSection2 from "./../components/DashboardSection2";
+import PublicAvailableDates from "./../components/PublicAvailableDates";
 
 function AvailableDatesPage(props) {
   return (
-    <DashboardSection2
+    <PublicAvailableDates
       bgColor="default"
       size="medium"
       bgImage=""
       bgImageOpacity={1}
-      title="Fechas Disponibles de"
+      title=""
       subtitle=""
     />
   );

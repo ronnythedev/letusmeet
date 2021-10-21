@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Section from "./Section";
+import SectionHeader from "./SectionHeader";
 import {
   Typography,
   Grid,
@@ -14,15 +15,20 @@ import EditImage from "@material-ui/icons/Edit";
 import SaveImage from "@material-ui/icons/Save";
 import CancelImage from "@material-ui/icons/Cancel";
 import ShareImage from "@material-ui/icons/Share";
-import SectionHeader from "./SectionHeader";
 import { useAuth } from "../util/auth.js";
 import { useRouter } from "../util/router.js";
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
-  title: {
+  subtitle: {
     fontSize: "16px",
     textAlign: "center",
+  },
+  userName: {
+    fontSize: "30px",
+    fontWeight: "bold",
+    textAlign: "center",
+    marginTop: "10px",
   },
   uniqueUrlContainer: {
     marginTop: "10px",
@@ -53,6 +59,7 @@ const useStyles = makeStyles((theme) => ({
     zIndex: 2,
     top: "0px",
     paddingBottom: "20px",
+    paddingTop: "10px",
     backgroundColor: theme.palette.background.default,
   },
   calendarWrapper: {
@@ -85,9 +92,11 @@ const useStyles = makeStyles((theme) => ({
   hourButtonRegular: {
     marginBottom: "5px",
     fontSize: "10px",
+    minHeight: "33px",
+    backgroundColor: "#ECECF1",
   },
   dayHeader: {
-    top: "249px",
+    top: "104px",
     position: "sticky",
     borderBottom: "1px solid #CBCBD6",
     marginBottom: "8px",
@@ -100,10 +109,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function MyAvailableDates(props) {
+function PublicAvailableDates(props) {
   const classes = useStyles();
   const auth = useAuth();
   const router = useRouter();
+
   const weekDays = [
     { text: "Domingo", key: 1 },
     { text: "Lunes", key: 2 },
@@ -173,20 +183,11 @@ function MyAvailableDates(props) {
     "6-1600-1700",
   ];
 
-  const [selectedDates, setSelectedDates] = useState(datesInitialState);
-  const [editingUrl, setEditingUrl] = useState(false);
-  const [uniqueUserUrl, setUniqueUserUrl] = useState("RonnyDelgado");
+  const [availableDates, setAvailableDates] = useState(datesInitialState);
 
-  const toggleSelectedDate = (currentDate) => {
-    let itemIndex = selectedDates.indexOf(currentDate);
-
-    if (itemIndex !== -1) {
-      setSelectedDates(selectedDates.filter((item) => item !== currentDate));
-    } else {
-      setSelectedDates([...selectedDates, currentDate]);
-    }
+  const openMeetingRequest = () => {
+    console.log("Open here");
   };
-
   return (
     <Section
       className={classes.customHeaderContainer}
@@ -205,67 +206,8 @@ function MyAvailableDates(props) {
             textAlign="center"
           />
           <Box>
-            <div className={classes.uniqueUrlTitle}>
-              Este es tu enlace único
-            </div>
-            <div className={classes.uniqueUrlContainer}>
-              <span className={classes.uniqueUrl}>
-                https://letusmeet/
-                <span className={editingUrl ? classes.hidden : null}>
-                  {uniqueUserUrl}
-                </span>
-              </span>
-
-              <div
-                className={!editingUrl ? classes.hidden : null}
-                style={{ marginTop: "5px" }}
-              >
-                &nbsp;
-                <OutlinedInput
-                  id="standard-basic"
-                  variant="standard"
-                  onChange={(e) => {
-                    setUniqueUserUrl(e.target.value);
-                  }}
-                  value={uniqueUserUrl}
-                />
-              </div>
-              <div>
-                &nbsp;
-                <IconButton
-                  color="primary"
-                  component="span"
-                  onClick={() => {
-                    setEditingUrl(!editingUrl);
-                  }}
-                >
-                  {editingUrl ? <SaveImage /> : <EditImage />}
-                </IconButton>
-              </div>
-              <div className={editingUrl ? classes.hidden : null}>
-                &nbsp;
-                <IconButton color="secondary" component="span">
-                  <ShareImage />
-                </IconButton>
-              </div>
-              <div className={editingUrl ? null : classes.hidden}>
-                &nbsp;
-                <IconButton
-                  color="secondary"
-                  component="span"
-                  onClick={() => {
-                    setEditingUrl(!editingUrl);
-                  }}
-                >
-                  <CancelImage />
-                </IconButton>
-              </div>
-            </div>
-            <div className={classes.saveButtonWrapper}>
-              <Button variant="contained" color="primary">
-                Guardar Mis Fechas
-              </Button>
-            </div>
+            <div className={classes.subtitle}>Reserva una reunión con</div>
+            <div className={classes.userName}>Henry Segura</div>
           </Box>
         </Box>
         <Grid
@@ -290,7 +232,7 @@ function MyAvailableDates(props) {
                           key={"btn-" + day.key + "-" + hour.key}
                           color="primary"
                           variant={
-                            selectedDates.indexOf(
+                            availableDates.indexOf(
                               String(day.key) + "-" + String(hour.key)
                             ) !== -1
                               ? "contained"
@@ -298,17 +240,26 @@ function MyAvailableDates(props) {
                           }
                           size="large"
                           onClick={() => {
-                            toggleSelectedDate(day.key + "-" + hour.key);
+                            openMeetingRequest(day.key + "-" + hour.key);
                           }}
+                          disabled={
+                            availableDates.indexOf(
+                              String(day.key) + "-" + String(hour.key)
+                            ) === -1
+                          }
                           className={
-                            selectedDates.indexOf(
+                            availableDates.indexOf(
                               String(day.key) + "-" + String(hour.key)
                             ) !== -1
                               ? classes.hourButtonSelected
                               : classes.hourButtonRegular
                           }
                         >
-                          {hour.text}
+                          {availableDates.indexOf(
+                            String(day.key) + "-" + String(hour.key)
+                          ) === -1
+                            ? ""
+                            : hour.text}
                         </Button>
                       );
                     })}
@@ -323,4 +274,4 @@ function MyAvailableDates(props) {
   );
 }
 
-export default MyAvailableDates;
+export default PublicAvailableDates;

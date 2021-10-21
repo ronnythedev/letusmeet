@@ -23,7 +23,7 @@ function SettingsSection(props) {
   const validSections = {
     general: true,
     password: true,
-    billing: true,
+    billing: false,
   };
 
   const section = validSections[props.section] ? props.section : "general";
