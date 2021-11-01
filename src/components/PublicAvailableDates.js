@@ -249,7 +249,7 @@ function PublicAvailableDates(props) {
           />
           <Box>
             <div className={classes.subtitle}>Reserva una reunión con</div>
-            <div className={classes.userName}>Henry Segura</div>
+            <div className={classes.userName}>Alejandro Bogantes</div>
           </Box>
           <Box className={classes.weekContainer}>
             <Box className={classes.weekOf}>Semana del</Box>
