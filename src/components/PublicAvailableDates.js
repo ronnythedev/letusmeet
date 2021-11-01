@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Section from "./Section";
 import SectionHeader from "./SectionHeader";
 import {
@@ -11,15 +11,35 @@ import {
   OutlinedInput,
   IconButton,
 } from "@material-ui/core";
-import EditImage from "@material-ui/icons/Edit";
-import SaveImage from "@material-ui/icons/Save";
-import CancelImage from "@material-ui/icons/Cancel";
-import ShareImage from "@material-ui/icons/Share";
+import LeftArrow from "@material-ui/icons/ChevronLeft";
+import RightArrow from "@material-ui/icons/ChevronRight";
 import { useAuth } from "../util/auth.js";
 import { useRouter } from "../util/router.js";
 import { makeStyles } from "@material-ui/core/styles";
+import { format, startOfWeek, add, getDate, compareAsc } from "date-fns";
 
 const useStyles = makeStyles((theme) => ({
+  weekBackAndForwardContainer: {
+    display: "flex",
+  },
+  weekContainer: {
+    top: 0,
+    height: "80px",
+    zIndex: 2,
+    position: "sticky",
+    display: "flex",
+    flexDirection: "column",
+  },
+  weekControls: {
+    display: "flex",
+    alignItems: "center",
+    padding: "16px 0px",
+  },
+  weekStartDate: {
+    marginRight: "24px",
+    marginLeft: "25px",
+    fontSize: "24px",
+  },
   subtitle: {
     fontSize: "16px",
     textAlign: "center",
@@ -29,27 +49,6 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: "bold",
     textAlign: "center",
     marginTop: "10px",
-  },
-  uniqueUrlContainer: {
-    marginTop: "10px",
-    textAlign: "center",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  uniqueUrl: {
-    marginTop: "5px",
-    fontSize: "24px",
-  },
-  hidden: {
-    display: "none",
-  },
-  cardContent: {
-    padding: theme.spacing(3),
-  },
-  saveButtonWrapper: {
-    paddingTop: "10px",
-    textAlign: "center",
   },
   customHeaderContainer: {
     paddingTop: "30px",
@@ -96,7 +95,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#ECECF1",
   },
   dayHeader: {
-    top: "104px",
+    top: "184px",
     position: "sticky",
     borderBottom: "1px solid #CBCBD6",
     marginBottom: "8px",
@@ -106,6 +105,23 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center",
     fontWeight: "bold",
     fontSize: "18px",
+  },
+  dayHeaderDateContainer: {
+    display: "flex",
+    justifyContent: "center",
+  },
+  dayHeaderDateHeader: {
+    width: "24px",
+    height: "24px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  weekOf: {
+    marginLeft: "25px",
+    color: "gray",
+    position: "absolute",
+    fontWeight: "bold",
   },
 }));
 
@@ -184,10 +200,36 @@ function PublicAvailableDates(props) {
   ];
 
   const [availableDates, setAvailableDates] = useState(datesInitialState);
+  const [firstDateOfWeek, setFirstDateOfWeek] = useState(
+    startOfWeek(new Date())
+  );
+  const [firstDateOfWeekFormatted, setFirstDateOfWeekFormatted] = useState(
+    firstDateOfWeek ? format(firstDateOfWeek, "dd/MMMM/yyyy") : ""
+  );
+
+  useEffect(() => {
+    setFirstDateOfWeekFormatted(format(firstDateOfWeek, "dd/MMMM/yyyy"));
+  }, [firstDateOfWeek]);
 
   const openMeetingRequest = () => {
-    console.log("Open here");
+    router.push("/meeting-request/1");
   };
+
+  const computeDisableDate = (dayKey, hourKey, dayDate) => {
+    // disable if it's not in the list of availableDates
+    // otherwise, disable if the day is in the past
+    if (availableDates.indexOf(String(dayKey) + "-" + String(hourKey)) === -1) {
+      return true;
+    }
+
+    // TODO: Uncomment the following to disable if the day is in the past
+    // if (compareAsc(dayDate, new Date()) === -1) {
+    //   return true;
+    // }
+
+    return false;
+  };
+
   return (
     <Section
       className={classes.customHeaderContainer}
@@ -209,20 +251,54 @@ function PublicAvailableDates(props) {
             <div className={classes.subtitle}>Reserva una reunión con</div>
             <div className={classes.userName}>Henry Segura</div>
           </Box>
+          <Box className={classes.weekContainer}>
+            <Box className={classes.weekOf}>Semana del</Box>
+            <Box className={classes.weekControls}>
+              <Box className={classes.weekStartDate}>
+                <span>{firstDateOfWeekFormatted}</span>
+              </Box>
+              <Box className={classes.weekBackAndForwardContainer}>
+                <Box>
+                  <IconButton color="primary" component="span">
+                    <LeftArrow />
+                  </IconButton>
+                </Box>
+                <Box>
+                  <IconButton color="primary" component="span">
+                    <RightArrow />
+                  </IconButton>
+                </Box>
+              </Box>
+            </Box>
+          </Box>
         </Box>
         <Grid
           container
           columns={7}
           spacing={1}
           className={classes.calendarWrapper}
-          style={{}}
         >
           {weekDays.map((day) => {
             return (
               <Grid key={day.key} item xs className={classes.dayItem}>
                 <Box className={classes.dayColumn} style={{}}>
                   <Box className={classes.dayHeader} style={{}}>
-                    <span>{day.text}</span>
+                    <Box>
+                      <Box>
+                        <span>{day.text}</span>
+                      </Box>
+                      <Box className={classes.dayHeaderDateContainer}>
+                        <Box className={classes.dayHeaderDateHeader}>
+                          <span>
+                            {getDate(
+                              add(new Date(firstDateOfWeek), {
+                                days: day.key - 1,
+                              })
+                            )}
+                          </span>
+                        </Box>
+                      </Box>
+                    </Box>
                   </Box>
                   <Box className={classes.hourSlot}>
                     {hoursByDay.map((hour) => {
@@ -242,11 +318,13 @@ function PublicAvailableDates(props) {
                           onClick={() => {
                             openMeetingRequest(day.key + "-" + hour.key);
                           }}
-                          disabled={
-                            availableDates.indexOf(
-                              String(day.key) + "-" + String(hour.key)
-                            ) === -1
-                          }
+                          disabled={computeDisableDate(
+                            day.key,
+                            hour.key,
+                            add(new Date(firstDateOfWeek), {
+                              days: day.key - 1,
+                            })
+                          )}
                           className={
                             availableDates.indexOf(
                               String(day.key) + "-" + String(hour.key)

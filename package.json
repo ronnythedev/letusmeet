@@ -11,6 +11,7 @@
     "@material-ui/icons": "4.11.2",
     "@material-ui/lab": "4.0.0-alpha.57",
     "analytics": "0.3.1",
+    "date-fns": "^2.25.0",
     "dotenv": "8.2.0",
     "express": "4.17.1",
     "fake-auth": "0.1.7",

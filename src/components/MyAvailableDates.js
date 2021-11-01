@@ -205,9 +205,7 @@ function MyAvailableDates(props) {
             textAlign="center"
           />
           <Box>
-            <div className={classes.uniqueUrlTitle}>
-              Este es tu enlace único
-            </div>
+            <div className={classes.title}>Este es tu enlace único</div>
             <div className={classes.uniqueUrlContainer}>
               <span className={classes.uniqueUrl}>
                 https://letusmeet/

@@ -1,9 +1,9 @@
 import React from "react";
-// from "./../components/DashboardSection2";
+import MeetingRequest from "../components/MeetingRequest.js";
 import { requireAuth } from "./../util/auth.js";
 
 function MeetingRequestPage(props) {
-  return <></>;
+  return <MeetingRequest props={props} />;
 }
 
 export default requireAuth(MeetingRequestPage);
