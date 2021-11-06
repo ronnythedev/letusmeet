@@ -15,6 +15,8 @@ const useStyles = makeStyles((theme) => ({
     padding: "5px",
     backgroundColor: "#202124",
     minHeight: "80px",
+    display: "flex",
+    alignItems: "center",
   },
   controlContainer: {
     fontSize: "1rem",
@@ -22,6 +24,7 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 500,
     color: "white",
     textAlign: "center",
+    alignItems: "center",
   },
   regularButton: {
     backgroundColor: "#3c4043",

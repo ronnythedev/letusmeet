@@ -7,7 +7,6 @@ import Box from "@material-ui/core/Box";
 const useStyles = makeStyles((theme) => ({
   root: {
     padding: "5px",
-    backgroundColor: "rgba(0,0,0,0.87)",
   },
   videoContainer: {
     minHeight: "500px",
