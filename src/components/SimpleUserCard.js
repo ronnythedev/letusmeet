@@ -26,8 +26,6 @@ const useStyles = makeStyles((theme) => ({
     position: "sticky",
   },
   large: {
-    // display: "flex",
-    // justifyContent: "center",
     marginTop: "20px",
     marginBottom: "20px",
     width: theme.spacing(7),
