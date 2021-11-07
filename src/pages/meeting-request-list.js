@@ -1,17 +1,8 @@
 import React from "react";
-import PublicAvailableDates from "../components/PublicAvailableDates";
+import MeetingRequestList from "../components/MeetingRequestsList";
 
 function MeetingRequestListPage(props) {
-  return (
-    <PublicAvailableDates
-      bgColor="default"
-      size="medium"
-      bgImage=""
-      bgImageOpacity={1}
-      title="Solicitudes de Reunión"
-      subtitle=""
-    />
-  );
+  return <MeetingRequestList />;
 }
 
 export default MeetingRequestListPage;
