@@ -1,68 +1,37 @@
 import React from "react";
-import Section from "./Section";
-import {
-  Typography,
-  Grid,
-  Container,
-  Card,
-  Button,
-  Box,
-  OutlinedInput,
-  IconButton,
-  TextField,
-  TextareaAutosize,
-} from "@material-ui/core";
+import Box from "@material-ui/core/Box";
+import Grid from "@material-ui/core/Grid";
+import Paper from "@material-ui/core/Paper";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+
+import CalendarIcon from "@material-ui/icons/CalendarTodayRounded";
+import TimeIcon from "@material-ui/icons/ScheduleRounded";
+import SubjectIcon from "@material-ui/icons/SubjectRounded";
+import MessageIcon from "@material-ui/icons/MessageRounded";
+import NameIcon from "@material-ui/icons/AccountBoxRounded";
+import EmailIcon from "@material-ui/icons/AlternateEmailRounded";
 import { makeStyles } from "@material-ui/core/styles";
-import { width } from "dom-helpers";
+import SimpleUserCard from "./SimpleUserCard";
 
 const useStyles = makeStyles((theme) => ({
-  header: {
-    paddingTop: 0,
+  root: {
+    padding: "10px",
   },
-  titleContainer: {
-    paddingLeft: 0,
-    paddingRight: 0,
+  title: {
+    fontSize: "30px",
+    fontWeight: "bold",
   },
-  subtitle1: {
-    display: "inline",
-    marginRight: "16px",
+  timeZone: {
+    color: "lightgray",
+    textAlign: "left",
   },
-  inLineDisplay: {
-    display: "inline",
+  meetingInfoContainer: {
+    paddingLeft: "40px",
+    paddingBottom: "20px",
   },
-  mainContainer: {
-    flex: "1 1 0%",
-    display: "flex",
-    padding: 0,
-    flexDirection: "column",
-    justifyContent: "space-between",
-  },
-  bodyContainer: {
-    marginBottom: 0,
-  },
-  footerContainer: {
-    display: "flex",
-    justifyContent: "flex-start",
-  },
-  meetingTitle: {
-    marginTop: "32px",
-    marginBottom: "32px",
-  },
-  subtitleContainer: {
-    marginRight: "16px",
-  },
-  formContainer: {
-    marginBottom: "32px",
-  },
-  formTitle: {
-    marginBottom: "16px",
-  },
-  footerBackContainer: {
-    flex: "0 0 auto",
-  },
-  footerBookContainer: {
-    flex: "0 0 auto",
-    marginLeft: "16px",
+  textWidth: {
+    width: "70%",
   },
 }));
 
@@ -70,144 +39,128 @@ const MeetingRequest = (props) => {
   const classes = useStyles();
 
   return (
-    <Section
-      className={classes.customHeaderContainer}
-      bgColor={props.bgColor}
-      size={props.size}
-      bgImage={props.bgImage}
-      bgImageOpacity={props.bgImageOpacity}
-    >
-      <Container style={{ marginLeft: "15px" }}>
-        <Box className={classes.header}>
-          <Box className={classes.titleContainer}>
-            <Typography variant="h5" gutterBottom={true}>
-              Reunión con Daniel
-            </Typography>
-            <Box>
-              <span>
-                <Typography
-                  component="p"
-                  color="textSecondary"
-                  className={classes.subtitle1}
-                >
-                  Daniel Campos
-                </Typography>
-              </span>
-              <Typography
-                component="p"
-                color="textSecondary"
-                className={classes.inLineDisplay}
-              >
-                Medicina Familiar
-              </Typography>
-            </Box>
-          </Box>
-        </Box>
-        <Box className={classes.mainContainer}>
-          <Box className={classes.bodyContainer}>
-            <Grid container>
-              <Box className={classes.meetingTitle}>
-                <Grid container>
-                  <Box className={classes.subtitleContainer}>
-                    <Typography
-                      variant="h6"
-                      gutterBottom={true}
-                      style={{ fontWeight: "bold" }}
-                    >
-                      Lunes, 25 de Octubre
-                    </Typography>
-                  </Box>
-                  <Box className={classes.subtitleContainer}>
-                    <Typography
-                      variant="h6"
-                      gutterBottom={true}
-                      style={{ fontWeight: "bold" }}
-                    >
-                      10:00 AM - 11:00 AM
-                    </Typography>
-                  </Box>
-                  <Box
-                    className={classes.subtitleContainer}
-                    style={{ fontWeight: "bold" }}
-                  >
-                    <Typography
-                      variant="h6"
-                      gutterBottom={true}
-                      color="textSecondary"
-                    >
-                      CST
-                    </Typography>
-                  </Box>
-                </Grid>
-              </Box>
-              <Grid container>
-                <Grid item>
-                  <Box className={classes.formContainer}>
-                    <Box className={classes.formTitle}>
-                      <Typography variant="h6" gutterBottom={true}>
-                        Información Personal
-                      </Typography>
-                    </Box>
-                    <Box>
-                      <Box>
-                        <span>Nombre: Fernanda Romero</span>
-                      </Box>
-                      <Box>
-                        <span>Email: fernanda@romero.com</span>
-                      </Box>
-                    </Box>
-                  </Box>
+    <Box className={classes.root}>
+      <Grid container spacing={2}>
+        <Grid item xs={4}>
+          <SimpleUserCard
+            userFirstName="Daniel"
+            userLastName="Ortiz"
+            userTitle="Medicina Familiar"
+          />
+        </Grid>
+        <Grid item xs={8}>
+          <Paper elevation={3} className={classes.meetingInfoContainer}>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <span className={classes.title}>Información de la reunión</span>
+              </Grid>
+              <Grid item xs={12}>
+                <Grid container spacing={2}>
+                  <Grid item xs={1}>
+                    <CalendarIcon />
+                  </Grid>
+                  <Grid item xs={11}>
+                    Fecha: 10/10/2021
+                  </Grid>
                 </Grid>
               </Grid>
-              <Grid container style={{ minWidth: "400px" }}>
-                <Grid item>
-                  <Box className={classes.formContainer}>
-                    <Box className={classes.formTitle}>
-                      <Typography variant="h6" gutterBottom={true}>
-                        Información Adicional
-                      </Typography>
-                    </Box>
-                    <Box style={{ minWidth: "400px" }}>
-                      <Box style={{ width: "100%" }}>
-                        <TextField
-                          style={{ minWidth: "400px" }}
-                          required
-                          label="Tema"
-                          variant="outlined"
-                        />
-                      </Box>
-                      <Box style={{ marginTop: "20px" }}>
-                        <TextField
-                          style={{ minWidth: "400px" }}
-                          placeholder="Notas"
-                          multiline
-                          rows={4}
-                          rowsMax={6}
-                          variant="outlined"
-                          label="Notas (opcional):"
-                        />
-                      </Box>
-                    </Box>
-                  </Box>
+              <Grid item xs={12}>
+                <Grid container spacing={2}>
+                  <Grid item xs={1}>
+                    <TimeIcon />
+                  </Grid>
+                  <Grid item xs={4}>
+                    Hora: 10:00 AM - 11:00 AM
+                  </Grid>
+                  <Grid item xs={6}>
+                    <span className={classes.timeZone}>CST</span>
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid item xs={12}>
+                <Grid container spacing={2}>
+                  <Grid item xs={1}>
+                    <SubjectIcon />
+                  </Grid>
+                  <Grid item xs={11}>
+                    <TextField
+                      required
+                      label="Tema"
+                      variant="outlined"
+                      className={classes.textWidth}
+                    />
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid item xs={12}>
+                <Grid container spacing={2}>
+                  <Grid item xs={1}>
+                    <MessageIcon />
+                  </Grid>
+                  <Grid item xs={11}>
+                    <TextField
+                      className={classes.textWidth}
+                      placeholder="Notas"
+                      multiline
+                      rows={4}
+                      rowsMax={6}
+                      variant="outlined"
+                      label="Notas (opcional):"
+                    />
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid item xs={12}>
+                <span className={classes.title}>Tu información</span>
+              </Grid>
+              <Grid item xs={12}>
+                <Grid container spacing={2}>
+                  <Grid item xs={1}>
+                    <NameIcon />
+                  </Grid>
+                  <Grid item xs={2}>
+                    <span>Nombre:</span>
+                  </Grid>
+                  <Grid item xs={9}>
+                    <span>Gerardo Jiménez</span>
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid item xs={12}>
+                <Grid container spacing={2}>
+                  <Grid item xs={1}>
+                    <EmailIcon />
+                  </Grid>
+                  <Grid item xs={2}>
+                    <span>Email:</span>
+                  </Grid>
+                  <Grid item xs={9}>
+                    <span>gerajimenez@gmail.com</span>
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid item xs={12}>
+                <hr />
+              </Grid>
+              <Grid item xs={12}>
+                <Grid container spacing={2}>
+                  <Grid item xs={4}>
+                    <Button variant="contained" color="secondary">
+                      Cancelar
+                    </Button>
+                  </Grid>
+                  <Grid item xs={8}>
+                    <Button variant="contained" color="primary">
+                      Enviar Solicitud
+                    </Button>
+                  </Grid>
                 </Grid>
               </Grid>
             </Grid>
-          </Box>
-          <Box className={classes.footerContainer}>
-            <Box className={classes.footerBackContainer}>
-              <Button variant="contained" color="secondary">
-                Volver
-              </Button>
-            </Box>
-            <Box className={classes.footerBookContainer}>
-              <Button variant="contained" color="primary">
-                Enviar Solicitud
-              </Button>
-            </Box>
-          </Box>
-        </Box>
-      </Container>
-    </Section>
+          </Paper>
+        </Grid>
+      </Grid>
+    </Box>
   );
 };
 

@@ -7,6 +7,7 @@ import { Link } from "./../util/router.js";
 import Hidden from "@material-ui/core/Hidden";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
+import NotificationIcon from "@material-ui/icons/Notifications";
 import Button from "@material-ui/core/Button";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Menu from "@material-ui/core/Menu";
@@ -18,6 +19,7 @@ import Drawer from "@material-ui/core/Drawer";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
+import Badge from "@material-ui/core/Badge";
 import { useAuth } from "./../util/auth.js";
 import { useDarkMode } from "./../util/theme.js";
 import { makeStyles } from "@material-ui/core/styles";
@@ -136,6 +138,15 @@ function Navbar(props) {
                       Salir
                     </MenuItem>
                   </Menu>
+                  <IconButton
+                    color="inherit"
+                    component={Link}
+                    to="/meeting-request-list"
+                  >
+                    <Badge badgeContent={4} color="secondary">
+                      <NotificationIcon />
+                    </Badge>
+                  </IconButton>
                 </>
               )}
 
@@ -188,7 +199,11 @@ function Navbar(props) {
               </ListItem>
             </>
           )}
-
+          <ListItem>
+            <Badge badgeContent={4} color="primary">
+              <NotificationIcon />
+            </Badge>
+          </ListItem>
           <ListItem>
             <IconButton
               color="inherit"

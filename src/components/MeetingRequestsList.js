@@ -1,28 +1,13 @@
 import React from "react";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
 import { makeStyles } from "@material-ui/core/styles";
 import MeetingRequestItem from "./MeetingRequestItem";
+import SimpleUserCard from "./SimpleUserCard";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     padding: "10px",
-  },
-  item: {
-    textAlign: "center",
-  },
-  yourName: {
-    fontSize: "30px",
-    fontWeight: "bold",
-  },
-  yourTitle: {
-    fontSize: "24px",
-    color: "gray",
-  },
-  cardRoot: {
-    top: "10px",
-    position: "sticky",
   },
 }));
 
@@ -32,16 +17,11 @@ const MeetingRequestList = () => {
     <Box className={classes.root}>
       <Grid container spacing={2}>
         <Grid item xs={4}>
-          <Paper elevation={3} className={classes.cardRoot}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} className={classes.item}>
-                <Box className={classes.yourName}>SuNombre Aquí</Box>
-              </Grid>
-              <Grid item xs={12} className={classes.item}>
-                <Box className={classes.yourTitle}>SuTítulo aquí</Box>
-              </Grid>
-            </Grid>
-          </Paper>
+          <SimpleUserCard
+            userFirstName="Daniel"
+            userLastName="Ortiz"
+            userTitle="Medicina Familiar"
+          />
         </Grid>
         <Grid item xs={8}>
           <Grid container spacing={2}>
