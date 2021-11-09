@@ -1,23 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+
 import Section from "./Section";
-import {
-  Typography,
-  Grid,
-  Container,
-  Card,
-  Button,
-  Box,
-  OutlinedInput,
-  IconButton,
-} from "@material-ui/core";
+import Grid from "@material-ui/core/Grid";
+import Container from "@material-ui/core/Container";
+import Button from "@material-ui/core/Button";
+import Box from "@material-ui/core/Box";
+import OutlinedInput from "@material-ui/core/OutlinedInput";
+import IconButton from "@material-ui/core/IconButton";
+
 import EditImage from "@material-ui/icons/Edit";
 import SaveImage from "@material-ui/icons/Save";
 import CancelImage from "@material-ui/icons/Cancel";
+
 import ShareImage from "@material-ui/icons/Share";
 import SectionHeader from "./SectionHeader";
 import { useAuth } from "../util/auth.js";
 import { useRouter } from "../util/router.js";
 import { makeStyles } from "@material-ui/core/styles";
+
+import * as userServices from "../services/userServices";
+import "../styles/main.css";
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -105,13 +107,13 @@ function MyAvailableDates(props) {
   const auth = useAuth();
   const router = useRouter();
   const weekDays = [
-    { text: "Domingo", key: 1 },
-    { text: "Lunes", key: 2 },
-    { text: "Martes", key: 3 },
-    { text: "Miércoles", key: 4 },
-    { text: "Jueves", key: 5 },
-    { text: "Viernes", key: 6 },
-    { text: "Sábado", key: 7 },
+    { text: "Domingo", key: 0 },
+    { text: "Lunes", key: 1 },
+    { text: "Martes", key: 2 },
+    { text: "Miércoles", key: 3 },
+    { text: "Jueves", key: 4 },
+    { text: "Viernes", key: 5 },
+    { text: "Sábado", key: 6 },
   ];
   const hoursByDay = [
     { text: "5:00 AM - 6:00 AM", key: "500-600" },
@@ -135,47 +137,30 @@ function MyAvailableDates(props) {
     { text: "11:00 PM - 12:00 AM", key: "2300-2400" },
   ];
 
-  const datesInitialState = [
-    "2-800-900",
-    "2-900-1000",
-    "2-1000-1100",
-    "2-1100-1200",
-    "2-1400-1500",
-    "2-1500-1600",
-    "2-1600-1700",
-    "3-800-900",
-    "3-900-1000",
-    "3-1000-1100",
-    "3-1100-1200",
-    "3-1400-1500",
-    "3-1500-1600",
-    "3-1600-1700",
-    "4-800-900",
-    "4-900-1000",
-    "4-1000-1100",
-    "4-1100-1200",
-    "4-1400-1500",
-    "4-1500-1600",
-    "4-1600-1700",
-    "5-800-900",
-    "5-900-1000",
-    "5-1000-1100",
-    "5-1100-1200",
-    "5-1400-1500",
-    "5-1500-1600",
-    "5-1600-1700",
-    "6-800-900",
-    "6-900-1000",
-    "6-1000-1100",
-    "6-1100-1200",
-    "6-1400-1500",
-    "6-1500-1600",
-    "6-1600-1700",
-  ];
-
-  const [selectedDates, setSelectedDates] = useState(datesInitialState);
+  const [selectedDates, setSelectedDates] = useState([]);
+  const [thereArePendingChanges, setThereArePendingChanges] = useState(false);
   const [editingUrl, setEditingUrl] = useState(false);
   const [uniqueUserUrl, setUniqueUserUrl] = useState("RonnyDelgado");
+
+  useEffect(() => {
+    userServices.getAvailableDates().then((availableDates) => {
+      formatAvailableDates(availableDates);
+    });
+  }, []);
+
+  const formatAvailableDates = (dates) => {
+    let formattedDates = dates.map((item) => {
+      return (
+        String(item.weekDay) +
+        "-" +
+        String(item.fromTime) +
+        "-" +
+        String(item.toTime)
+      );
+    });
+
+    setSelectedDates(formattedDates);
+  };
 
   const toggleSelectedDate = (currentDate) => {
     let itemIndex = selectedDates.indexOf(currentDate);
@@ -184,6 +169,10 @@ function MyAvailableDates(props) {
       setSelectedDates(selectedDates.filter((item) => item !== currentDate));
     } else {
       setSelectedDates([...selectedDates, currentDate]);
+    }
+
+    if (!thereArePendingChanges) {
+      setThereArePendingChanges(true);
     }
   };
 
@@ -260,7 +249,11 @@ function MyAvailableDates(props) {
               </div>
             </div>
             <div className={classes.saveButtonWrapper}>
-              <Button variant="contained" color="primary">
+              <Button
+                variant="contained"
+                color="primary"
+                className={thereArePendingChanges ? "button-glow" : ""}
+              >
                 Guardar Mis Fechas
               </Button>
             </div>
