@@ -12,11 +12,14 @@ import EditImage from "@material-ui/icons/Edit";
 import SaveImage from "@material-ui/icons/Save";
 import CancelImage from "@material-ui/icons/Cancel";
 
-import ShareImage from "@material-ui/icons/Share";
+import CopyImage from "@material-ui/icons/FileCopyRounded";
 import SectionHeader from "./SectionHeader";
 import { useAuth } from "../util/auth.js";
 import { useRouter } from "../util/router.js";
 import { makeStyles } from "@material-ui/core/styles";
+
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import * as userServices from "../services/userServices";
 import "../styles/main.css";
@@ -140,12 +143,16 @@ function MyAvailableDates(props) {
   const [selectedDates, setSelectedDates] = useState([]);
   const [thereArePendingChanges, setThereArePendingChanges] = useState(false);
   const [editingUrl, setEditingUrl] = useState(false);
-  const [uniqueUserUrl, setUniqueUserUrl] = useState("RonnyDelgado");
+  const [uniqueUserUrl, setUniqueUserUrl] = useState("");
+  const [originalUserUrl, setOriginalUserUrl] = useState("");
 
   useEffect(() => {
     userServices.getAvailableDates().then((availableDates) => {
       formatAvailableDates(availableDates);
     });
+
+    setUniqueUserUrl(auth.user.uniqueLinkId);
+    setOriginalUserUrl(auth.user.uniqueLinkId);
   }, []);
 
   const formatAvailableDates = (dates) => {
@@ -176,6 +183,58 @@ function MyAvailableDates(props) {
     }
   };
 
+  const copyToClipboard = () => {
+    toast.success("¡Copiado!", {
+      theme: "colored",
+    });
+  };
+
+  const cancelEdit = () => {
+    setUniqueUserUrl(originalUserUrl);
+    setEditingUrl(false);
+  };
+
+  const saveNewLink = () => {
+    if (originalUserUrl === uniqueUserUrl) {
+      toast.info("Debes cambiar el valor antes de intentar salvar.", {
+        theme: "colored",
+        autoClose: 8000,
+        closeOnClick: true,
+      });
+    } else {
+      userServices.saveUniqueUrl(uniqueUserUrl).then((response) => {
+        if (response.code === undefined) {
+          toast.success("El enlance se guardó con éxito.", {
+            theme: "colored",
+            autoClose: 8000,
+            closeOnClick: true,
+          });
+          setEditingUrl(false);
+          setOriginalUserUrl(uniqueUserUrl);
+        } else if (response.code === 500) {
+          if (
+            response.message === "The given link is being used by another user."
+          ) {
+            toast.error(
+              "El enlance ya está siendo utilizado por otro usuario.",
+              {
+                theme: "colored",
+                autoClose: 8000,
+                closeOnClick: true,
+              }
+            );
+          } else {
+            toast.error("Ocurrió un error no identificado.", {
+              theme: "colored",
+              autoClose: 8000,
+              closeOnClick: true,
+            });
+          }
+        }
+      });
+    }
+  };
+
   return (
     <Section
       className={classes.customHeaderContainer}
@@ -202,7 +261,6 @@ function MyAvailableDates(props) {
                   {uniqueUserUrl}
                 </span>
               </span>
-
               <div
                 className={!editingUrl ? classes.hidden : null}
                 style={{ marginTop: "5px" }}
@@ -219,20 +277,36 @@ function MyAvailableDates(props) {
               </div>
               <div>
                 &nbsp;
-                <IconButton
-                  color="primary"
-                  component="span"
-                  onClick={() => {
-                    setEditingUrl(!editingUrl);
-                  }}
-                >
-                  {editingUrl ? <SaveImage /> : <EditImage />}
-                </IconButton>
+                {editingUrl ? (
+                  <IconButton
+                    color="primary"
+                    component="span"
+                    onClick={() => {
+                      saveNewLink();
+                    }}
+                  >
+                    <SaveImage />
+                  </IconButton>
+                ) : (
+                  <IconButton
+                    color="primary"
+                    component="span"
+                    onClick={() => {
+                      setEditingUrl(!editingUrl);
+                    }}
+                  >
+                    <EditImage />
+                  </IconButton>
+                )}
               </div>
               <div className={editingUrl ? classes.hidden : null}>
                 &nbsp;
-                <IconButton color="secondary" component="span">
-                  <ShareImage />
+                <IconButton
+                  color="secondary"
+                  component="span"
+                  onClick={copyToClipboard}
+                >
+                  <CopyImage />
                 </IconButton>
               </div>
               <div className={editingUrl ? null : classes.hidden}>
@@ -241,7 +315,7 @@ function MyAvailableDates(props) {
                   color="secondary"
                   component="span"
                   onClick={() => {
-                    setEditingUrl(!editingUrl);
+                    cancelEdit();
                   }}
                 >
                   <CancelImage />
@@ -310,6 +384,11 @@ function MyAvailableDates(props) {
           })}
         </Grid>
       </Container>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+      />
     </Section>
   );
 }
