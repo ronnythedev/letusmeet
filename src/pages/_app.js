@@ -8,6 +8,7 @@ import ContactPage from "./contact";
 import DashboardPage from "./dashboard";
 import MeetingRequestListPage from "./meeting-request-list";
 import MeetingRequestPage from "./meeting-request";
+import MeetingJoinPage from "./meeting-join";
 import AvailableDatesPage from "./available-dates";
 import LiveVideoPage from "./live-video";
 import SettingsPage from "./settings";
@@ -58,6 +59,8 @@ function App(props) {
                   path="/meeting-request/:userid"
                   component={MeetingRequestPage}
                 />
+
+                <Route exact path="/meeting-join" component={MeetingJoinPage} />
 
                 <Route exact path="/live-video" component={LiveVideoPage} />
 

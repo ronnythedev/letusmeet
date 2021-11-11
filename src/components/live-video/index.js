@@ -1,8 +1,21 @@
-import React from "react";
+import React, {
+  useContext,
+  useRef,
+  useEffect,
+  useState,
+  useReducer,
+} from "react";
 import VideoControls from "./Controls";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+
+import io from "socket.io-client";
+import Peer from "simple-peer";
+import { id } from "date-fns/locale";
+//import { SocketContext } from "../../util/socketContext";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -20,6 +33,8 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     marginRight: "15%",
     marginLeft: "15%",
+    display: "flex",
+    justifyContent: "center",
   },
   smallVideo: {
     backgroundColor: "#4A4E51",
@@ -33,21 +48,155 @@ const useStyles = makeStyles((theme) => ({
     marginRight: "17%",
     marginLeft: "15%",
   },
+  videoSmallElement: {
+    position: "absolute",
+    height: "100%",
+    width: "100%",
+  },
+  videoLargeElement: {
+    // height: "100%",
+    // width: "100%",
+  },
 }));
 
 const LiveVideoComponent = () => {
   const classes = useStyles();
-  return (
-    <Box sx={{ flexGrow: 1 }} className={classes.root}>
-      <Grid container spacing={2}>
-        <Grid item xs={12} className={classes.videoContainer}>
-          <Box className={classes.bigVideo}></Box>
-          <Box className={classes.smallVideo}></Box>
-        </Grid>
 
-        <VideoControls />
-      </Grid>
-    </Box>
+  const [peers, setPeers] = useState([]);
+  const [myId, setMyId] = useState("");
+  const [roomID, setRoomID] = useState("123");
+
+  const localVideoRef = useRef();
+  const remoteVideoRef = useRef();
+  const socketRef = useRef();
+  const peersRef = useRef([]);
+
+  useEffect(() => {
+    socketRef.current = io.connect(
+      process.env.REACT_APP_API_BASE_URL.replace("/api", "")
+    );
+
+    setMyId(socketRef.current.id);
+
+    navigator.mediaDevices
+      .getUserMedia({ video: true, audio: true })
+      .then((stream) => {
+        localVideoRef.current.srcObject = stream;
+        socketRef.current.emit("join room", roomID);
+        socketRef.current.on("all users", (users) => {
+          const peers = [];
+          users.forEach((userID) => {
+            const peer = createPeer(userID, socketRef.current.id, stream);
+            peersRef.current.push({
+              peerID: userID,
+              peer,
+            });
+            peers.push(peer);
+          });
+          setPeers(peers);
+        });
+
+        socketRef.current.on("user joined", (payload) => {
+          const peer = addPeer(payload.signal, payload.callerID, stream);
+          peersRef.current.push({
+            peerID: payload.callerID,
+            peer,
+          });
+
+          setPeers((users) => [...users, peer]);
+        });
+
+        socketRef.current.on("receiving returned signal", (payload) => {
+          const item = peersRef.current.find((p) => p.peerID === payload.id);
+          item.peer.signal(payload.signal);
+        });
+      });
+  }, []);
+
+  const createPeer = (userToSignal, callerID, stream) => {
+    const peer = new Peer({
+      initiator: true,
+      trickle: false,
+      stream,
+    });
+
+    peer.on("signal", (signal) => {
+      socketRef.current.emit("sending signal", {
+        userToSignal,
+        callerID,
+        signal,
+      });
+    });
+
+    if (callerID !== myId) {
+      remoteVideoRef.current.srcObject = stream;
+    }
+
+    return peer;
+  };
+
+  const addPeer = (incomingSignal, callerID, stream) => {
+    const peer = new Peer({
+      initiator: false,
+      trickle: false,
+      stream,
+    });
+
+    peer.on("signal", (signal) => {
+      socketRef.current.emit("returning signal", { signal, callerID });
+    });
+
+    peer.signal(incomingSignal);
+
+    return peer;
+  };
+
+  return (
+    <>
+      <Box sx={{ flexGrow: 1 }} className={classes.root}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} className={classes.videoContainer}>
+            <Box className={classes.bigVideo}>
+              <video
+                playsInline
+                autoPlay
+                ref={remoteVideoRef}
+                className={classes.videoLargeElement}
+              />
+            </Box>
+            <Box className={classes.smallVideo}>
+              <video
+                playsInline
+                autoPlay
+                muted
+                ref={localVideoRef}
+                className={classes.videoSmallElement}
+              />
+            </Box>
+          </Grid>
+          <VideoControls myId={myId} />
+        </Grid>
+      </Box>
+      {/* <Box>
+        <TextField
+          required
+          label="ROOM"
+          variant="outlined"
+          // onChange={(e) => {
+          //   setUserCode(e.target.value);
+          // }}
+        />
+        <Button
+          variant="contained"
+          color="secondary"
+          // onClick={() => {
+          //   joinRoom();
+          // }}
+        >
+          Conectar
+        </Button>
+      </Box> */}
+    </>
   );
 };
 

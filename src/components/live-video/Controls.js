@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const VideoControls = () => {
+const VideoControls = (props) => {
   const classes = useStyles();
   const [micIsOn, setMicIsOn] = useState(true);
   const [cameraIsOn, setCameraIsOn] = useState(true);
@@ -67,7 +67,7 @@ const VideoControls = () => {
     <Box sx={{ flexGrow: 1 }} className={classes.root}>
       <Grid container spacing={2}>
         <Grid item xs={3} className={classes.controlContainer}>
-          <span>Meeting Id: 12345</span>
+          <span>My Id: {props.myId}</span>
         </Grid>
         <Grid item xs={6} className={classes.controlContainer}>
           <Grid container spacing={2}>
