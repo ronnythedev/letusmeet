@@ -14,8 +14,6 @@ import Button from "@material-ui/core/Button";
 
 import io from "socket.io-client";
 import Peer from "simple-peer";
-import { id } from "date-fns/locale";
-//import { SocketContext } from "../../util/socketContext";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -76,19 +74,26 @@ const LiveVideoComponent = () => {
       process.env.REACT_APP_API_BASE_URL.replace("/api", "")
     );
 
-    setMyId(socketRef.current.id);
-
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((stream) => {
         localVideoRef.current.srcObject = stream;
+
+        console.log("YO: ", socketRef.current.id);
         socketRef.current.emit("join room", roomID);
-        socketRef.current.on("all users", (users) => {
+
+        socketRef.current.on("all users", (otherUsers) => {
+          // Escenario:
+          // I was already in the meeting and someone else joined,
+          // then I received the info of all other users except me (in the 'otherUsers' param)
+          // Therefore I create a 'peer' with each of them.
+          // I send the id of the other user, my id and my stream
+
           const peers = [];
-          users.forEach((userID) => {
-            const peer = createPeer(userID, socketRef.current.id, stream);
+          otherUsers.forEach((otherUserID) => {
+            const peer = createPeer(otherUserID, socketRef.current.id, stream);
             peersRef.current.push({
-              peerID: userID,
+              peerID: otherUserID,
               peer,
             });
             peers.push(peer);
@@ -97,17 +102,32 @@ const LiveVideoComponent = () => {
         });
 
         socketRef.current.on("user joined", (payload) => {
+          console.log(
+            "In 'user joined'. id of the user that just joined: ",
+            payload.callerID
+          );
+
           const peer = addPeer(payload.signal, payload.callerID, stream);
+
           peersRef.current.push({
             peerID: payload.callerID,
             peer,
           });
 
+          remoteVideoRef.current.srcObject = stream;
+
           setPeers((users) => [...users, peer]);
         });
 
         socketRef.current.on("receiving returned signal", (payload) => {
+          console.log(
+            "in 'receiving returned signal'. id of the user already in the meeting: ",
+            payload.id
+          );
           const item = peersRef.current.find((p) => p.peerID === payload.id);
+          console.log("Peer of the user already in the meeting: ", item);
+
+          remoteVideoRef.current.srcObject = item.peer.streams[0];
           item.peer.signal(payload.signal);
         });
       });
@@ -127,10 +147,6 @@ const LiveVideoComponent = () => {
         signal,
       });
     });
-
-    if (callerID !== myId) {
-      remoteVideoRef.current.srcObject = stream;
-    }
 
     return peer;
   };
@@ -160,6 +176,7 @@ const LiveVideoComponent = () => {
               <video
                 playsInline
                 autoPlay
+                muted
                 ref={remoteVideoRef}
                 className={classes.videoLargeElement}
               />
@@ -174,7 +191,7 @@ const LiveVideoComponent = () => {
               />
             </Box>
           </Grid>
-          <VideoControls myId={myId} />
+          <VideoControls myId="" />
         </Grid>
       </Box>
       {/* <Box>
