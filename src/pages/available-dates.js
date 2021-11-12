@@ -1,7 +1,9 @@
 import React from "react";
 import PublicAvailableDates from "./../components/PublicAvailableDates";
+import { useParams } from "react-router-dom";
 
-function AvailableDatesPage(props) {
+const AvailableDatesPage = () => {
+  const { userurl } = useParams();
   return (
     <PublicAvailableDates
       bgColor="default"
@@ -10,8 +12,9 @@ function AvailableDatesPage(props) {
       bgImageOpacity={1}
       title=""
       subtitle=""
+      userUrl={userurl}
     />
   );
-}
+};
 
 export default AvailableDatesPage;

@@ -20,6 +20,8 @@ import { makeStyles } from "@material-ui/core/styles";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import PageLoader from "./PageLoader";
 
 import * as userServices from "../services/userServices";
 import "../styles/main.css";
@@ -145,10 +147,13 @@ function MyAvailableDates(props) {
   const [editingUrl, setEditingUrl] = useState(false);
   const [uniqueUserUrl, setUniqueUserUrl] = useState("");
   const [originalUserUrl, setOriginalUserUrl] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    setIsLoading(true);
     userServices.getAvailableDates().then((availableDates) => {
       formatAvailableDates(availableDates);
+      setIsLoading(false);
     });
 
     setUniqueUserUrl(auth.user.uniqueLinkId);
@@ -202,11 +207,15 @@ function MyAvailableDates(props) {
         closeOnClick: true,
       });
     } else {
+      const toastId = toast.loading("Guardando nuevo valor...");
       userServices.saveUniqueUrl(uniqueUserUrl).then((response) => {
         if (response.code === undefined) {
-          toast.success("El enlance se guardó con éxito.", {
+          toast.update(toastId, {
+            render: "El enlance se guardó con éxito.",
+            type: "success",
+            isLoading: false,
             theme: "colored",
-            autoClose: 8000,
+            autoClose: 6000,
             closeOnClick: true,
           });
           setEditingUrl(false);
@@ -215,24 +224,68 @@ function MyAvailableDates(props) {
           if (
             response.message === "The given link is being used by another user."
           ) {
-            toast.error(
-              "El enlance ya está siendo utilizado por otro usuario.",
-              {
-                theme: "colored",
-                autoClose: 8000,
-                closeOnClick: true,
-              }
-            );
-          } else {
-            toast.error("Ocurrió un error no identificado.", {
+            toast.update(toastId, {
+              render: "El enlance ya está siendo utilizado por otro usuario.",
+              type: "error",
+              isLoading: false,
               theme: "colored",
-              autoClose: 8000,
+              autoClose: 6000,
+              closeOnClick: true,
+            });
+          } else {
+            toast.update(toastId, {
+              render:
+                "Ocurrió un error no identificado. El enlace no se guardó. Por favor trata de nuevo.",
+              type: "error",
+              isLoading: false,
+              theme: "colored",
+              autoClose: 6000,
               closeOnClick: true,
             });
           }
         }
       });
     }
+  };
+
+  const updateNewDates = () => {
+    const toastId = toast.loading("Guardando fechas...");
+    setIsLoading(true);
+    userServices.updateAvailableDates(selectedDates).then((response) => {
+      if (response.code === undefined) {
+        toast.update(toastId, {
+          render: "Las fechas se guardaron con éxito.",
+          type: "success",
+          isLoading: false,
+          theme: "colored",
+          autoClose: 6000,
+          closeOnClick: true,
+        });
+        setThereArePendingChanges(false);
+        formatAvailableDates(response.availableDates);
+      } else if (response.code === 500) {
+        toast.update(toastId, {
+          render:
+            "Las fechas no se pudieron actualizar. Por favor intente de nuevo.",
+          type: "error",
+          isLoading: false,
+          theme: "colored",
+          autoClose: 6000,
+          closeOnClick: true,
+        });
+      } else {
+        toast.update(toastId, {
+          render:
+            "Ocurrió un error no identificado. Las fechas no se pudieron actualizar. Por favor intente de nuevo.",
+          type: "error",
+          isLoading: false,
+          theme: "colored",
+          autoClose: 6000,
+          closeOnClick: true,
+        });
+      }
+      setIsLoading(false);
+    });
   };
 
   return (
@@ -256,7 +309,7 @@ function MyAvailableDates(props) {
             <div className={classes.title}>Este es tu enlace único</div>
             <div className={classes.uniqueUrlContainer}>
               <span className={classes.uniqueUrl}>
-                https://letusmeet/
+                https://staging.myplanapp.info/dates/
                 <span className={editingUrl ? classes.hidden : null}>
                   {uniqueUserUrl}
                 </span>
@@ -301,13 +354,14 @@ function MyAvailableDates(props) {
               </div>
               <div className={editingUrl ? classes.hidden : null}>
                 &nbsp;
-                <IconButton
-                  color="secondary"
-                  component="span"
-                  onClick={copyToClipboard}
+                <CopyToClipboard
+                  text={"https://staging.myplanapp.info/dates/" + uniqueUserUrl}
+                  onCopy={() => copyToClipboard()}
                 >
-                  <CopyImage />
-                </IconButton>
+                  <IconButton color="secondary" component="span">
+                    <CopyImage />
+                  </IconButton>
+                </CopyToClipboard>
               </div>
               <div className={editingUrl ? null : classes.hidden}>
                 &nbsp;
@@ -327,63 +381,71 @@ function MyAvailableDates(props) {
                 variant="contained"
                 color="primary"
                 className={thereArePendingChanges ? "button-glow" : ""}
+                onClick={() => {
+                  updateNewDates();
+                }}
               >
                 Guardar Mis Fechas
               </Button>
             </div>
           </Box>
         </Box>
-        <Grid
-          container
-          columns={7}
-          spacing={1}
-          className={classes.calendarWrapper}
-          style={{}}
-        >
-          {weekDays.map((day) => {
-            return (
-              <Grid key={day.key} item xs className={classes.dayItem}>
-                <Box className={classes.dayColumn} style={{}}>
-                  <Box className={classes.dayHeader} style={{}}>
-                    <span>{day.text}</span>
+        {isLoading ? (
+          <PageLoader />
+        ) : (
+          <Grid
+            container
+            columns={7}
+            spacing={1}
+            className={classes.calendarWrapper}
+            style={{}}
+          >
+            {weekDays.map((day) => {
+              return (
+                <Grid key={day.key} item xs className={classes.dayItem}>
+                  <Box className={classes.dayColumn} style={{}}>
+                    <Box className={classes.dayHeader} style={{}}>
+                      <span>{day.text}</span>
+                    </Box>
+                    <Box className={classes.hourSlot}>
+                      {hoursByDay.map((hour) => {
+                        return (
+                          <Button
+                            id={"btn-" + day.key + "-" + hour.key}
+                            key={"btn-" + day.key + "-" + hour.key}
+                            color="primary"
+                            variant={
+                              selectedDates.indexOf(
+                                String(day.key) + "-" + String(hour.key)
+                              ) !== -1
+                                ? "contained"
+                                : "outlined"
+                            }
+                            size="large"
+                            onClick={() => {
+                              toggleSelectedDate(day.key + "-" + hour.key);
+                            }}
+                            className={
+                              selectedDates.indexOf(
+                                String(day.key) + "-" + String(hour.key)
+                              ) !== -1
+                                ? classes.hourButtonSelected
+                                : classes.hourButtonRegular
+                            }
+                          >
+                            {hour.text}
+                          </Button>
+                        );
+                      })}
+                    </Box>
                   </Box>
-                  <Box className={classes.hourSlot}>
-                    {hoursByDay.map((hour) => {
-                      return (
-                        <Button
-                          id={"btn-" + day.key + "-" + hour.key}
-                          key={"btn-" + day.key + "-" + hour.key}
-                          color="primary"
-                          variant={
-                            selectedDates.indexOf(
-                              String(day.key) + "-" + String(hour.key)
-                            ) !== -1
-                              ? "contained"
-                              : "outlined"
-                          }
-                          size="large"
-                          onClick={() => {
-                            toggleSelectedDate(day.key + "-" + hour.key);
-                          }}
-                          className={
-                            selectedDates.indexOf(
-                              String(day.key) + "-" + String(hour.key)
-                            ) !== -1
-                              ? classes.hourButtonSelected
-                              : classes.hourButtonRegular
-                          }
-                        >
-                          {hour.text}
-                        </Button>
-                      );
-                    })}
-                  </Box>
-                </Box>
-              </Grid>
-            );
-          })}
-        </Grid>
+                </Grid>
+              );
+            })}
+          </Grid>
+        )}
       </Container>
+
       <ToastContainer
         position="top-right"
         autoClose={3000}

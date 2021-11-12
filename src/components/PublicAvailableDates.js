@@ -131,13 +131,13 @@ function PublicAvailableDates(props) {
   const router = useRouter();
 
   const weekDays = [
-    { text: "Domingo", key: 1 },
-    { text: "Lunes", key: 2 },
-    { text: "Martes", key: 3 },
-    { text: "Miércoles", key: 4 },
-    { text: "Jueves", key: 5 },
-    { text: "Viernes", key: 6 },
-    { text: "Sábado", key: 7 },
+    { text: "Domingo", key: 0 },
+    { text: "Lunes", key: 1 },
+    { text: "Martes", key: 2 },
+    { text: "Miércoles", key: 3 },
+    { text: "Jueves", key: 4 },
+    { text: "Viernes", key: 5 },
+    { text: "Sábado", key: 6 },
   ];
   const hoursByDay = [
     { text: "5:00 AM - 6:00 AM", key: "500-600" },
@@ -292,7 +292,7 @@ function PublicAvailableDates(props) {
                           <span>
                             {getDate(
                               add(new Date(firstDateOfWeek), {
-                                days: day.key - 1,
+                                days: day.key,
                               })
                             )}
                           </span>

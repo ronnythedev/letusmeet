@@ -19,3 +19,14 @@ export const saveUniqueUrl = async (link) => {
     });
   return response;
 };
+
+export const updateAvailableDates = async (newDates) => {
+  let response = await apiRequest("user/update-dates", "PATCH", {
+    newDates: newDates,
+  })
+    .then((response) => response)
+    .catch((error) => {
+      throw new Error(error.message);
+    });
+  return response;
+};

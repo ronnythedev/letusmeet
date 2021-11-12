@@ -1,16 +1,8 @@
-import React, {
-  useContext,
-  useRef,
-  useEffect,
-  useState,
-  useReducer,
-} from "react";
+import React, { useRef, useEffect, useState } from "react";
 import VideoControls from "./Controls";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
-import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
 
 import io from "socket.io-client";
 import Peer from "simple-peer";
@@ -61,11 +53,13 @@ const LiveVideoComponent = () => {
   const classes = useStyles();
 
   const [peers, setPeers] = useState([]);
-  const [myId, setMyId] = useState("");
   const [roomID, setRoomID] = useState("123");
+  const [micIsOn, setMicIsOn] = useState(true);
+  const [cameraIsOn, setCameraIsOn] = useState(true);
 
   const localVideoRef = useRef();
   const remoteVideoRef = useRef();
+  const localStream = useRef();
   const socketRef = useRef();
   const peersRef = useRef([]);
 
@@ -77,9 +71,9 @@ const LiveVideoComponent = () => {
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((stream) => {
-        localVideoRef.current.srcObject = stream;
+        localStream.current = stream;
+        localVideoRef.current.srcObject = localStream.current;
 
-        console.log("YO: ", socketRef.current.id);
         socketRef.current.emit("join room", roomID);
 
         socketRef.current.on("all users", (otherUsers) => {
@@ -109,15 +103,11 @@ const LiveVideoComponent = () => {
             peer,
           });
 
-          //remoteVideoRef.current.srcObject = stream;
-
           setPeers((users) => [...users, peer]);
         });
 
         socketRef.current.on("receiving returned signal", (payload) => {
           const item = peersRef.current.find((p) => p.peerID === payload.id);
-
-          //remoteVideoRef.current.srcObject = item.peer.streams[0];
           item.peer.signal(payload.signal);
         });
       });
@@ -183,34 +173,21 @@ const LiveVideoComponent = () => {
               <video
                 playsInline
                 autoPlay
-                muted
+                muted={!micIsOn}
                 ref={localVideoRef}
                 className={classes.videoSmallElement}
               />
             </Box>
           </Grid>
-          <VideoControls myId="" />
+          <VideoControls
+            micIsOn={micIsOn}
+            setMicIsOn={setMicIsOn}
+            cameraIsOn={cameraIsOn}
+            setCameraIsOn={setCameraIsOn}
+            meetingId=""
+          />
         </Grid>
       </Box>
-      {/* <Box>
-        <TextField
-          required
-          label="ROOM"
-          variant="outlined"
-          // onChange={(e) => {
-          //   setUserCode(e.target.value);
-          // }}
-        />
-        <Button
-          variant="contained"
-          color="secondary"
-          // onClick={() => {
-          //   joinRoom();
-          // }}
-        >
-          Conectar
-        </Button>
-      </Box> */}
     </>
   );
 };

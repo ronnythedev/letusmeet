@@ -60,37 +60,37 @@ const useStyles = makeStyles((theme) => ({
 
 const VideoControls = (props) => {
   const classes = useStyles();
-  const [micIsOn, setMicIsOn] = useState(true);
-  const [cameraIsOn, setCameraIsOn] = useState(true);
 
   return (
     <Box sx={{ flexGrow: 1 }} className={classes.root}>
       <Grid container spacing={2}>
         <Grid item xs={3} className={classes.controlContainer}>
-          <span>My Id: {props.myId}</span>
+          <span>Meeting Id: {props.meetingId}</span>
         </Grid>
         <Grid item xs={6} className={classes.controlContainer}>
           <Grid container spacing={2}>
             <Grid item xs={4} className={classes.controlItem}>
               <IconButton
-                className={micIsOn ? classes.regularButton : classes.redButton}
+                className={
+                  props.micIsOn ? classes.regularButton : classes.redButton
+                }
                 onClick={() => {
-                  setMicIsOn(!micIsOn);
+                  props.setMicIsOn(!props.micIsOn);
                 }}
               >
-                {micIsOn ? <MicOn /> : <MicOff />}
+                {props.micIsOn ? <MicOn /> : <MicOff />}
               </IconButton>
             </Grid>
             <Grid item xs={4} className={classes.controlItem}>
               <IconButton
                 className={
-                  cameraIsOn ? classes.regularButton : classes.redButton
+                  props.cameraIsOn ? classes.regularButton : classes.redButton
                 }
                 onClick={() => {
-                  setCameraIsOn(!cameraIsOn);
+                  props.setCameraIsOn(!props.cameraIsOn);
                 }}
               >
-                {cameraIsOn ? <VideoOn /> : <VideoOff />}
+                {props.cameraIsOn ? <VideoOn /> : <VideoOff />}
               </IconButton>
             </Grid>
             <Grid item xs={4} className={classes.controlItem}>
