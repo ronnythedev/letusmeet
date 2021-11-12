@@ -102,11 +102,6 @@ const LiveVideoComponent = () => {
         });
 
         socketRef.current.on("user joined", (payload) => {
-          console.log(
-            "In 'user joined'. id of the user that just joined: ",
-            payload.callerID
-          );
-
           const peer = addPeer(payload.signal, payload.callerID, stream);
 
           peersRef.current.push({
@@ -114,20 +109,15 @@ const LiveVideoComponent = () => {
             peer,
           });
 
-          remoteVideoRef.current.srcObject = stream;
+          //remoteVideoRef.current.srcObject = stream;
 
           setPeers((users) => [...users, peer]);
         });
 
         socketRef.current.on("receiving returned signal", (payload) => {
-          console.log(
-            "in 'receiving returned signal'. id of the user already in the meeting: ",
-            payload.id
-          );
           const item = peersRef.current.find((p) => p.peerID === payload.id);
-          console.log("Peer of the user already in the meeting: ", item);
 
-          remoteVideoRef.current.srcObject = item.peer.streams[0];
+          //remoteVideoRef.current.srcObject = item.peer.streams[0];
           item.peer.signal(payload.signal);
         });
       });
@@ -148,6 +138,10 @@ const LiveVideoComponent = () => {
       });
     });
 
+    peer.on("stream", (stream) => {
+      remoteVideoRef.current.srcObject = stream;
+    });
+
     return peer;
   };
 
@@ -163,6 +157,10 @@ const LiveVideoComponent = () => {
     });
 
     peer.signal(incomingSignal);
+
+    peer.on("stream", (stream) => {
+      remoteVideoRef.current.srcObject = stream;
+    });
 
     return peer;
   };
