@@ -18,7 +18,7 @@ import { useAuth } from "../util/auth.js";
 import { useRouter } from "../util/router.js";
 import { makeStyles } from "@material-ui/core/styles";
 
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import PageLoader from "./PageLoader";
@@ -252,7 +252,7 @@ function MyAvailableDates(props) {
     const toastId = toast.loading("Guardando fechas...");
     setIsLoading(true);
     userServices.updateAvailableDates(selectedDates).then((response) => {
-      if (response.code === undefined) {
+      if (response.code === undefined || response.code === 200) {
         toast.update(toastId, {
           render: "Las fechas se guardaron con éxito.",
           type: "success",
@@ -263,20 +263,10 @@ function MyAvailableDates(props) {
         });
         setThereArePendingChanges(false);
         formatAvailableDates(response.availableDates);
-      } else if (response.code === 500) {
-        toast.update(toastId, {
-          render:
-            "Las fechas no se pudieron actualizar. Por favor intente de nuevo.",
-          type: "error",
-          isLoading: false,
-          theme: "colored",
-          autoClose: 6000,
-          closeOnClick: true,
-        });
       } else {
         toast.update(toastId, {
           render:
-            "Ocurrió un error no identificado. Las fechas no se pudieron actualizar. Por favor intente de nuevo.",
+            "Las fechas no se pudieron actualizar. Por favor intente de nuevo.",
           type: "error",
           isLoading: false,
           theme: "colored",
@@ -445,12 +435,6 @@ function MyAvailableDates(props) {
           </Grid>
         )}
       </Container>
-
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-      />
     </Section>
   );
 }

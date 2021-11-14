@@ -21,6 +21,7 @@ import "./../util/analytics.js";
 import { AuthProvider } from "./../util/auth.js";
 import { ThemeProvider } from "./../util/theme.js";
 import { QueryClientProvider } from "./../util/db.js";
+import { ToastContainer } from "react-toastify";
 
 function App(props) {
   return (
@@ -82,7 +83,11 @@ function App(props) {
 
                 <Route component={NotFoundPage} />
               </Switch>
-
+              <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+              />
               <Footer
                 bgColor="light"
                 size="normal"

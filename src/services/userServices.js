@@ -30,3 +30,13 @@ export const updateAvailableDates = async (newDates) => {
     });
   return response;
 };
+
+export const getUserInfoByLinkId = async (linkId, fromDate) => {
+  let response = await apiRequest(`user/link/${linkId}/${fromDate}`)
+    .then((response) => response)
+    .catch((error) => {
+      throw new Error(error.message);
+    });
+
+  return response;
+};

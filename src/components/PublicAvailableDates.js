@@ -1,22 +1,32 @@
 import React, { useState, useEffect } from "react";
+
 import Section from "./Section";
 import SectionHeader from "./SectionHeader";
-import {
-  Typography,
-  Grid,
-  Container,
-  Card,
-  Button,
-  Box,
-  OutlinedInput,
-  IconButton,
-} from "@material-ui/core";
+import Grid from "@material-ui/core/Grid";
+import Container from "@material-ui/core/Container";
+import Button from "@material-ui/core/Button";
+import Box from "@material-ui/core/Box";
+import IconButton from "@material-ui/core/IconButton";
 import LeftArrow from "@material-ui/icons/ChevronLeft";
 import RightArrow from "@material-ui/icons/ChevronRight";
+import { makeStyles } from "@material-ui/core/styles";
+
+import { toast } from "react-toastify";
 import { useAuth } from "../util/auth.js";
 import { useRouter } from "../util/router.js";
-import { makeStyles } from "@material-ui/core/styles";
-import { format, startOfWeek, add, getDate, compareAsc } from "date-fns";
+
+import PageLoader from "./PageLoader";
+
+import * as userServices from "../services/userServices";
+
+import {
+  format,
+  startOfWeek,
+  add,
+  getDate,
+  isSameDay,
+  compareAsc,
+} from "date-fns";
 
 const useStyles = makeStyles((theme) => ({
   weekBackAndForwardContainer: {
@@ -161,73 +171,122 @@ function PublicAvailableDates(props) {
     { text: "11:00 PM - 12:00 AM", key: "2300-2400" },
   ];
 
-  const datesInitialState = [
-    "2-800-900",
-    "2-900-1000",
-    "2-1000-1100",
-    "2-1100-1200",
-    "2-1400-1500",
-    "2-1500-1600",
-    "2-1600-1700",
-    "3-800-900",
-    "3-900-1000",
-    "3-1000-1100",
-    "3-1100-1200",
-    "3-1400-1500",
-    "3-1500-1600",
-    "3-1600-1700",
-    "4-800-900",
-    "4-900-1000",
-    "4-1000-1100",
-    "4-1100-1200",
-    "4-1400-1500",
-    "4-1500-1600",
-    "4-1600-1700",
-    "5-800-900",
-    "5-900-1000",
-    "5-1000-1100",
-    "5-1100-1200",
-    "5-1400-1500",
-    "5-1500-1600",
-    "5-1600-1700",
-    "6-800-900",
-    "6-900-1000",
-    "6-1000-1100",
-    "6-1100-1200",
-    "6-1400-1500",
-    "6-1500-1600",
-    "6-1600-1700",
-  ];
-
-  const [availableDates, setAvailableDates] = useState(datesInitialState);
+  const currentWeekFirstDate = startOfWeek(new Date());
+  const [userId, setUserId] = useState("");
+  const [userName, setUserName] = useState("");
+  const [userLastName, setUserLastName] = useState("");
+  const [availableDates, setAvailableDates] = useState([]);
+  const [upcomingMeetings, setUpcomingMeetings] = useState([]);
   const [firstDateOfWeek, setFirstDateOfWeek] = useState(
     startOfWeek(new Date())
   );
   const [firstDateOfWeekFormatted, setFirstDateOfWeekFormatted] = useState(
     firstDateOfWeek ? format(firstDateOfWeek, "dd/MMMM/yyyy") : ""
   );
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    getUserInformation();
+  }, []);
 
   useEffect(() => {
     setFirstDateOfWeekFormatted(format(firstDateOfWeek, "dd/MMMM/yyyy"));
+    getUserInformation();
   }, [firstDateOfWeek]);
+
+  const getUserInformation = () => {
+    setIsLoading(true);
+    userServices
+      .getUserInfoByLinkId(props.userUrl, new Date(firstDateOfWeek).getTime())
+      .then((response) => {
+        if (response.code === undefined || response.code === 200) {
+          setUserId(response.user.id);
+          setUserName(response.user.firstName);
+          setUserLastName(response.user.lastName);
+          formatAvailableDates(response.availableDates);
+          formatUpcomingMeetings(response.upcomingMeetings);
+        } else {
+          toast.error({
+            render:
+              "No se pudo consultar la información. Por favor intente de nuevo.",
+            type: "error",
+            isLoading: false,
+            theme: "colored",
+            autoClose: 6000,
+            closeOnClick: true,
+          });
+        }
+        setIsLoading(false);
+      });
+  };
+
+  const formatAvailableDates = (dates) => {
+    let formattedDates = dates.map((item) => {
+      return (
+        String(item.weekDay) +
+        "-" +
+        String(item.fromTime) +
+        "-" +
+        String(item.toTime)
+      );
+    });
+
+    setAvailableDates(formattedDates);
+  };
+
+  const formatUpcomingMeetings = (meetings) => {
+    let formattedUpcomingMeetings = meetings.map((meeting) => {
+      return {
+        id: meeting.id,
+        startDateTs: meeting.startDateTs,
+        startDate: new Date(meeting.startDateTs),
+        endDateTs: meeting.endDateTs,
+        fromTime: meeting.fromTime,
+        toTime: meeting.toTime,
+        timeKey: String(meeting.fromTime) + "-" + String(meeting.toTime),
+      };
+    });
+
+    setUpcomingMeetings(formattedUpcomingMeetings);
+  };
 
   const openMeetingRequest = () => {
     router.push("/meeting-request/1");
   };
 
   const computeDisableDate = (dayKey, hourKey, dayDate) => {
+    // disable if it's in the past already
+    if (compareAsc(dayDate, new Date()) === -1) {
+      return true;
+    }
+
     // disable if it's not in the list of availableDates
-    // otherwise, disable if the day is in the past
     if (availableDates.indexOf(String(dayKey) + "-" + String(hourKey)) === -1) {
       return true;
     }
 
-    // TODO: Uncomment the following to disable if the day is in the past
-    // if (compareAsc(dayDate, new Date()) === -1) {
-    //   return true;
-    // }
+    // disable if it's in the list of upcoming meetings (already booked)
+    let meetingsInDate = upcomingMeetings.filter(
+      (date) => isSameDay(dayDate, date.startDate) && date.timeKey === hourKey
+    );
 
-    return false;
+    return meetingsInDate.length > 0;
+  };
+
+  const oneWeekAhead = () => {
+    setFirstDateOfWeek(
+      add(new Date(firstDateOfWeek), {
+        days: 7,
+      })
+    );
+  };
+
+  const oneWeekBehind = () => {
+    setFirstDateOfWeek(
+      add(new Date(firstDateOfWeek), {
+        days: -7,
+      })
+    );
   };
 
   return (
@@ -249,7 +308,9 @@ function PublicAvailableDates(props) {
           />
           <Box>
             <div className={classes.subtitle}>Reserva una reunión con</div>
-            <div className={classes.userName}>Alejandro Bogantes</div>
+            <div className={classes.userName}>
+              {userName}&nbsp;{userLastName}
+            </div>
           </Box>
           <Box className={classes.weekContainer}>
             <Box className={classes.weekOf}>Semana del</Box>
@@ -259,12 +320,28 @@ function PublicAvailableDates(props) {
               </Box>
               <Box className={classes.weekBackAndForwardContainer}>
                 <Box>
-                  <IconButton color="primary" component="span">
+                  <IconButton
+                    color="primary"
+                    component="span"
+                    disabled={isSameDay(
+                      new Date(firstDateOfWeek),
+                      new Date(currentWeekFirstDate)
+                    )}
+                    onClick={() => {
+                      oneWeekBehind();
+                    }}
+                  >
                     <LeftArrow />
                   </IconButton>
                 </Box>
                 <Box>
-                  <IconButton color="primary" component="span">
+                  <IconButton
+                    color="primary"
+                    component="span"
+                    onClick={() => {
+                      oneWeekAhead();
+                    }}
+                  >
                     <RightArrow />
                   </IconButton>
                 </Box>
@@ -272,81 +349,85 @@ function PublicAvailableDates(props) {
             </Box>
           </Box>
         </Box>
-        <Grid
-          container
-          columns={7}
-          spacing={1}
-          className={classes.calendarWrapper}
-        >
-          {weekDays.map((day) => {
-            return (
-              <Grid key={day.key} item xs className={classes.dayItem}>
-                <Box className={classes.dayColumn} style={{}}>
-                  <Box className={classes.dayHeader} style={{}}>
-                    <Box>
+        {isLoading ? (
+          <PageLoader />
+        ) : (
+          <Grid
+            container
+            columns={7}
+            spacing={1}
+            className={classes.calendarWrapper}
+          >
+            {weekDays.map((day) => {
+              return (
+                <Grid key={day.key} item xs className={classes.dayItem}>
+                  <Box className={classes.dayColumn} style={{}}>
+                    <Box className={classes.dayHeader} style={{}}>
                       <Box>
-                        <span>{day.text}</span>
+                        <Box>
+                          <span>{day.text}</span>
+                        </Box>
+                        <Box className={classes.dayHeaderDateContainer}>
+                          <Box className={classes.dayHeaderDateHeader}>
+                            <span>
+                              {getDate(
+                                add(new Date(firstDateOfWeek), {
+                                  days: day.key,
+                                })
+                              )}
+                            </span>
+                          </Box>
+                        </Box>
                       </Box>
-                      <Box className={classes.dayHeaderDateContainer}>
-                        <Box className={classes.dayHeaderDateHeader}>
-                          <span>
-                            {getDate(
+                    </Box>
+                    <Box className={classes.hourSlot}>
+                      {hoursByDay.map((hour) => {
+                        return (
+                          <Button
+                            id={"btn-" + day.key + "-" + hour.key}
+                            key={"btn-" + day.key + "-" + hour.key}
+                            color="primary"
+                            variant={
+                              availableDates.indexOf(
+                                String(day.key) + "-" + String(hour.key)
+                              ) !== -1
+                                ? "contained"
+                                : "outlined"
+                            }
+                            size="large"
+                            onClick={() => {
+                              openMeetingRequest(day.key + "-" + hour.key);
+                            }}
+                            disabled={computeDisableDate(
+                              day.key,
+                              hour.key,
                               add(new Date(firstDateOfWeek), {
                                 days: day.key,
                               })
                             )}
-                          </span>
-                        </Box>
-                      </Box>
+                            className={
+                              availableDates.indexOf(
+                                String(day.key) + "-" + String(hour.key)
+                              ) !== -1
+                                ? classes.hourButtonSelected
+                                : classes.hourButtonRegular
+                            }
+                          >
+                            {availableDates.indexOf(
+                              String(day.key) + "-" + String(hour.key)
+                            ) === -1
+                              ? ""
+                              : hour.text}
+                          </Button>
+                        );
+                      })}
                     </Box>
                   </Box>
-                  <Box className={classes.hourSlot}>
-                    {hoursByDay.map((hour) => {
-                      return (
-                        <Button
-                          id={"btn-" + day.key + "-" + hour.key}
-                          key={"btn-" + day.key + "-" + hour.key}
-                          color="primary"
-                          variant={
-                            availableDates.indexOf(
-                              String(day.key) + "-" + String(hour.key)
-                            ) !== -1
-                              ? "contained"
-                              : "outlined"
-                          }
-                          size="large"
-                          onClick={() => {
-                            openMeetingRequest(day.key + "-" + hour.key);
-                          }}
-                          disabled={computeDisableDate(
-                            day.key,
-                            hour.key,
-                            add(new Date(firstDateOfWeek), {
-                              days: day.key - 1,
-                            })
-                          )}
-                          className={
-                            availableDates.indexOf(
-                              String(day.key) + "-" + String(hour.key)
-                            ) !== -1
-                              ? classes.hourButtonSelected
-                              : classes.hourButtonRegular
-                          }
-                        >
-                          {availableDates.indexOf(
-                            String(day.key) + "-" + String(hour.key)
-                          ) === -1
-                            ? ""
-                            : hour.text}
-                        </Button>
-                      );
-                    })}
-                  </Box>
-                </Box>
-              </Grid>
-            );
-          })}
-        </Grid>
+                </Grid>
+              );
+            })}
+          </Grid>
+        )}
       </Container>
     </Section>
   );
