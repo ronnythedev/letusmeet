@@ -198,7 +198,6 @@ const LiveVideoComponent = (props) => {
                 <video
                   playsInline
                   autoPlay
-                  muted
                   ref={remoteVideoRef}
                   className={classes.videoLargeElement}
                 />
@@ -207,7 +206,7 @@ const LiveVideoComponent = (props) => {
                 <video
                   playsInline
                   autoPlay
-                  muted={!micIsOn}
+                  muted
                   ref={localVideoRef}
                   className={classes.videoSmallElement}
                 />
