@@ -63,3 +63,12 @@ export const insertMeetingRequest = async (
     });
   return response;
 };
+
+export const getUpcomingMeetings = async () => {
+  let response = await apiRequest("user/upcoming-meetings", "GET")
+    .then((response) => response)
+    .catch((error) => {
+      throw new Error(error.message);
+    });
+  return response;
+};

@@ -124,21 +124,26 @@ function Navbar(props) {
                     <MenuItem component={Link} to="/dashboard">
                       Mis Fechas Disponibles
                     </MenuItem>
-
+                    <MenuItem component={Link} to="/upcoming-meetings-list">
+                      Mis Próximas Reuniones
+                    </MenuItem>
+                    <MenuItem component={Link} to="/meeting-request-list">
+                      Solicitudes Pendientes
+                    </MenuItem>
                     <MenuItem component={Link} to="/settings/general">
                       Configuración
                     </MenuItem>
 
                     <Divider />
                     <MenuItem
-                      onClick={(event) => {
+                      onClick={() => {
                         auth.signout();
                       }}
                     >
                       Salir
                     </MenuItem>
                   </Menu>
-                  <IconButton
+                  {/* <IconButton
                     color="inherit"
                     component={Link}
                     to="/meeting-request-list"
@@ -146,7 +151,7 @@ function Navbar(props) {
                     <Badge badgeContent={4} color="secondary">
                       <NotificationIcon />
                     </Badge>
-                  </IconButton>
+                  </IconButton> */}
                 </>
               )}
 

@@ -10,6 +10,7 @@ import MeetingRequestListPage from "./meeting-request-list";
 import MeetingRequestPage from "./meeting-request";
 import MeetingJoinPage from "./meeting-join";
 import AvailableDatesPage from "./available-dates";
+import UpcomingMeetingList from "../components/UpcomingMeetingList";
 import LiveVideoPage from "./live-video";
 import SettingsPage from "./settings";
 import PurchasePage from "./purchase";
@@ -53,6 +54,12 @@ function App(props) {
                   exact
                   path="/meeting-request-list"
                   component={MeetingRequestListPage}
+                />
+
+                <Route
+                  exact
+                  path="/upcoming-meetings-list"
+                  component={UpcomingMeetingList}
                 />
 
                 <Route
