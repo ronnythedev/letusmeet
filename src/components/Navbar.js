@@ -122,10 +122,10 @@ function Navbar(props) {
                     }}
                   >
                     <MenuItem component={Link} to="/dashboard">
-                      Mis Fechas Disponibles
+                      Fechas Disponibles
                     </MenuItem>
                     <MenuItem component={Link} to="/upcoming-meetings-list">
-                      Mis Próximas Reuniones
+                      Próximas Reuniones
                     </MenuItem>
                     <MenuItem component={Link} to="/meeting-request-list">
                       Solicitudes Pendientes

@@ -72,3 +72,15 @@ export const getUpcomingMeetings = async () => {
     });
   return response;
 };
+
+export const validateMeetingRoomPin = async (roomId, enteredRoomPin) => {
+  let response = await apiRequest(
+    `user/validate-room-pin/${roomId}/${enteredRoomPin}`,
+    "GET"
+  )
+    .then((response) => response)
+    .catch((error) => {
+      throw new Error(error.message);
+    });
+  return response;
+};

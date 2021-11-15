@@ -209,7 +209,7 @@ function MyAvailableDates(props) {
     } else {
       const toastId = toast.loading("Guardando nuevo valor...");
       userServices.saveUniqueUrl(uniqueUserUrl).then((response) => {
-        if (response.code === undefined) {
+        if (response.code === undefined || response.code === 200) {
           toast.update(toastId, {
             render: "El enlance se guardó con éxito.",
             type: "success",
