@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 
+import { useHistory } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 
 import Webcam from "react-webcam";
@@ -40,8 +41,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const MeetingJoin = () => {
+const MeetingJoin = (props) => {
   const classes = useStyles();
+  const history = useHistory();
+
+  const [roomPin, setRoomPin] = useState("");
+  const [roomId, setRoomId] = useState("");
+
+  useEffect(() => {
+    setRoomId(props.roomId);
+    history.replace("/meeting-join");
+  }, []);
 
   return (
     <Box className={classes.root}>
@@ -84,12 +94,22 @@ const MeetingJoin = () => {
               <Grid item xs={12}>
                 <Grid container spacing={2}>
                   <Grid item xs={6} className={classes.item}>
-                    <Button variant="contained" color="secondary">
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      onClick={() => {
+                        history.goBack();
+                      }}
+                    >
                       Volver
                     </Button>
                   </Grid>
                   <Grid item xs={6} className={classes.item}>
-                    <Button variant="contained" color="primary">
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      disabled={roomPin === ""}
+                    >
                       Ingresar
                     </Button>
                   </Grid>

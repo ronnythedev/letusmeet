@@ -7,6 +7,7 @@ import { useAuth } from "../util/auth";
 
 import UpcomingMeetingItem from "./UpcomingMeetingItem";
 import SimpleUserCard from "./SimpleUserCard";
+import PageLoader from "./PageLoader";
 
 import * as userServices from "../services/userServices";
 
@@ -21,11 +22,13 @@ const UpcomingMeetingList = () => {
   const auth = useAuth();
 
   const [upcomingMeetings, setUpcomingMeetings] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    setIsLoading(true);
     userServices.getUpcomingMeetings().then((response) => {
       setUpcomingMeetings(response.upcomingMeetings);
-      console.log(response.upcomingMeetings);
+      setIsLoading(false);
     });
   }, []);
 
@@ -39,33 +42,39 @@ const UpcomingMeetingList = () => {
             userTitle={auth.user.email}
           />
         </Grid>
-        <Grid item xs={8}>
-          <Grid container spacing={2}>
-            {upcomingMeetings.map((meeting) => {
-              return (
-                <UpcomingMeetingItem
-                  key={meeting.id}
-                  attendeeFullName={
-                    meeting.attendee.firstName + " " + meeting.attendee.lastName
-                  }
-                  meetingDate={meeting.startDateTs}
-                  meetingHourKey={
-                    String(meeting.fromTime) + "-" + String(meeting.toTime)
-                  }
-                  organizerFullName={
-                    meeting.organizer.firstName +
-                    " " +
-                    meeting.organizer.lastName
-                  }
-                  meetingSubject={meeting.subject}
-                  meetingAdditionalNotes={meeting.notes}
-                  roomPin={meeting.roomPin}
-                  roomId={meeting.roomId}
-                />
-              );
-            })}
+        {isLoading ? (
+          <PageLoader />
+        ) : (
+          <Grid item xs={8}>
+            <Grid container spacing={2}>
+              {upcomingMeetings.map((meeting) => {
+                return (
+                  <UpcomingMeetingItem
+                    key={meeting.id}
+                    attendeeFullName={
+                      meeting.attendee.firstName +
+                      " " +
+                      meeting.attendee.lastName
+                    }
+                    meetingDate={meeting.startDateTs}
+                    meetingHourKey={
+                      String(meeting.fromTime) + "-" + String(meeting.toTime)
+                    }
+                    organizerFullName={
+                      meeting.organizer.firstName +
+                      " " +
+                      meeting.organizer.lastName
+                    }
+                    meetingSubject={meeting.subject}
+                    meetingAdditionalNotes={meeting.notes}
+                    roomPin={meeting.roomPin}
+                    roomId={meeting.roomId}
+                  />
+                );
+              })}
+            </Grid>
           </Grid>
-        </Grid>
+        )}
       </Grid>
     </Box>
   );
