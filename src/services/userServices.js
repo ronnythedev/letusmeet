@@ -40,3 +40,26 @@ export const getUserInfoByLinkId = async (linkId, fromDate) => {
 
   return response;
 };
+
+export const insertMeetingRequest = async (
+  userToId,
+  startDateTs,
+  fromTime,
+  toTime,
+  subject,
+  optionalNotes
+) => {
+  let response = await apiRequest(`user/insert-meeting-request`, "POST", {
+    userToId: userToId,
+    startDateTs: startDateTs,
+    fromTime: fromTime,
+    toTime: toTime,
+    subject: subject,
+    optionalNotes: optionalNotes,
+  })
+    .then((response) => response)
+    .catch((error) => {
+      throw new Error(error.message);
+    });
+  return response;
+};

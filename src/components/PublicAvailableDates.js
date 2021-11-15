@@ -175,6 +175,7 @@ function PublicAvailableDates(props) {
   const [userId, setUserId] = useState("");
   const [userName, setUserName] = useState("");
   const [userLastName, setUserLastName] = useState("");
+  const [userEmail, setUserEmail] = useState("");
   const [availableDates, setAvailableDates] = useState([]);
   const [upcomingMeetings, setUpcomingMeetings] = useState([]);
   const [firstDateOfWeek, setFirstDateOfWeek] = useState(
@@ -203,6 +204,7 @@ function PublicAvailableDates(props) {
           setUserId(response.user.id);
           setUserName(response.user.firstName);
           setUserLastName(response.user.lastName);
+          setUserEmail(response.user.email);
           formatAvailableDates(response.availableDates);
           formatUpcomingMeetings(response.upcomingMeetings);
         } else {
@@ -250,8 +252,10 @@ function PublicAvailableDates(props) {
     setUpcomingMeetings(formattedUpcomingMeetings);
   };
 
-  const openMeetingRequest = () => {
-    router.push("/meeting-request/1");
+  const openMeetingRequest = (selectedDateTs, hourKey) => {
+    router.push(
+      `/meeting-request/${selectedDateTs}/${hourKey}/${userId}/${userName}/${userLastName}/${userEmail}`
+    );
   };
 
   const computeDisableDate = (dayKey, hourKey, dayDate) => {
@@ -396,7 +400,12 @@ function PublicAvailableDates(props) {
                             }
                             size="large"
                             onClick={() => {
-                              openMeetingRequest(day.key + "-" + hour.key);
+                              openMeetingRequest(
+                                add(new Date(firstDateOfWeek), {
+                                  days: day.key,
+                                }).getTime(),
+                                hour.key
+                              );
                             }}
                             disabled={computeDisableDate(
                               day.key,

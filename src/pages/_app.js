@@ -57,7 +57,13 @@ function App(props) {
 
                 <Route
                   exact
-                  path="/meeting-request/:userid"
+                  path="/meeting-request/:selectedTimeTs/:hourKey/:userId/:userName/:userLastName/:userEmail"
+                  component={MeetingRequestPage}
+                />
+
+                <Route
+                  exact
+                  path="/meeting-request"
                   component={MeetingRequestPage}
                 />
 

@@ -15,7 +15,7 @@ function IndexPage(props) {
         title="Reuniones en línea fáciles y gratis"
         subtitle="Con nuestra solución podrás gestionar tu calendario, confirmar citas y hacer reuniones en línea gratis y sin límites de tiempo."
         image="https://staging.files.eleadertech.com/ronny/main2.jpg"
-        buttonText="Iniciar"
+        buttonText="Crear Cuenta"
         buttonColor="primary"
         buttonPath="/auth/singin"
       />
