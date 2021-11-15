@@ -74,6 +74,12 @@ function App(props) {
                   component={MeetingRequestPage}
                 />
 
+                <Route
+                  exact
+                  path="/meeting-join/:roomId"
+                  component={MeetingJoinPage}
+                />
+
                 <Route exact path="/meeting-join" component={MeetingJoinPage} />
 
                 <Route exact path="/live-video" component={LiveVideoPage} />

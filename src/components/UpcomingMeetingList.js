@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
@@ -20,9 +20,12 @@ const UpcomingMeetingList = () => {
   const classes = useStyles();
   const auth = useAuth();
 
+  const [upcomingMeetings, setUpcomingMeetings] = useState([]);
+
   useEffect(() => {
     userServices.getUpcomingMeetings().then((response) => {
-      console.log(response);
+      setUpcomingMeetings(response.upcomingMeetings);
+      console.log(response.upcomingMeetings);
     });
   }, []);
 
@@ -31,20 +34,36 @@ const UpcomingMeetingList = () => {
       <Grid container spacing={2}>
         <Grid item xs={4}>
           <SimpleUserCard
-            userFirstName={auth.user.name}
+            userFirstName={auth.user.firstName}
             userLastName={auth.user.lastName}
             userTitle={auth.user.email}
           />
         </Grid>
         <Grid item xs={8}>
           <Grid container spacing={2}>
-            <UpcomingMeetingItem
-              name="Fernando Calle"
-              meetingDate="10/10/2021"
-              meetingTime="10:00 AM - 11:00 AM"
-              meetingSubject="asd ñidf asdf ad qwer adf adsf adf"
-              meetingAdditionalNotes="asd ñidf asdf ad qwer adf adsf adf"
-            />
+            {upcomingMeetings.map((meeting) => {
+              return (
+                <UpcomingMeetingItem
+                  key={meeting.id}
+                  attendeeFullName={
+                    meeting.attendee.firstName + " " + meeting.attendee.lastName
+                  }
+                  meetingDate={meeting.startDateTs}
+                  meetingHourKey={
+                    String(meeting.fromTime) + "-" + String(meeting.toTime)
+                  }
+                  organizerFullName={
+                    meeting.organizer.firstName +
+                    " " +
+                    meeting.organizer.lastName
+                  }
+                  meetingSubject={meeting.subject}
+                  meetingAdditionalNotes={meeting.notes}
+                  roomPin={meeting.roomPin}
+                  roomId={meeting.roomId}
+                />
+              );
+            })}
           </Grid>
         </Grid>
       </Grid>

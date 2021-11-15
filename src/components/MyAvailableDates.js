@@ -299,7 +299,7 @@ function MyAvailableDates(props) {
             <div className={classes.title}>Este es tu enlace único</div>
             <div className={classes.uniqueUrlContainer}>
               <span className={classes.uniqueUrl}>
-                https://staging.myplanapp.info/dates/
+                {process.env.REACT_APP_DOMAIN + "/dates/"}
                 <span className={editingUrl ? classes.hidden : null}>
                   {uniqueUserUrl}
                 </span>
@@ -345,7 +345,9 @@ function MyAvailableDates(props) {
               <div className={editingUrl ? classes.hidden : null}>
                 &nbsp;
                 <CopyToClipboard
-                  text={"https://staging.myplanapp.info/dates/" + uniqueUserUrl}
+                  text={
+                    process.env.REACT_APP_DOMAIN + "/dates/" + uniqueUserUrl
+                  }
                   onCopy={() => copyToClipboard()}
                 >
                   <IconButton color="secondary" component="span">
