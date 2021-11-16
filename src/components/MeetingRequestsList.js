@@ -8,7 +8,6 @@ import MeetingRequestItem from "./MeetingRequestItem";
 import SimpleUserCard from "./SimpleUserCard";
 import PageLoader from "./PageLoader";
 
-//import { useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../util/auth";
 import * as userServices from "../services/userServices";
@@ -31,7 +30,6 @@ const useStyles = makeStyles((theme) => ({
 
 const MeetingRequestList = () => {
   const classes = useStyles();
-  //const history = useHistory();
   const auth = useAuth();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -66,7 +64,7 @@ const MeetingRequestList = () => {
           type: "success",
           isLoading: false,
           theme: "colored",
-          autoClose: 6000,
+          autoClose: 500,
           closeOnClick: true,
         });
 
@@ -83,6 +81,42 @@ const MeetingRequestList = () => {
         toast.update(toastId, {
           render:
             "Hubo un error al confirmar la reunión. Por favor intente de nuevo.",
+          type: "error",
+          isLoading: false,
+          theme: "colored",
+          autoClose: 6000,
+          closeOnClick: true,
+        });
+      }
+    });
+  };
+
+  const declineMeeting = (meetingId) => {
+    const toastId = toast.loading("Declinando solicitud...");
+    userServices.declineMeeting(meetingId).then((response) => {
+      if (response.code === undefined || response.code === 200) {
+        toast.update(toastId, {
+          render: "Solicitud declinada",
+          type: "success",
+          isLoading: false,
+          theme: "colored",
+          autoClose: 500,
+          closeOnClick: true,
+        });
+
+        const meetingIndex = upcomingMeetings.findIndex(
+          ({ id }) => id === meetingId
+        );
+        if (meetingIndex !== -1) {
+          setUpcomingMeetings([
+            ...upcomingMeetings.slice(0, meetingIndex),
+            ...upcomingMeetings.slice(meetingIndex + 1),
+          ]);
+        }
+      } else {
+        toast.update(toastId, {
+          render:
+            "Hubo un error al declinar la reunión. Por favor intente de nuevo.",
           type: "error",
           isLoading: false,
           theme: "colored",
@@ -133,6 +167,7 @@ const MeetingRequestList = () => {
                       meetingSubject={meeting.subject}
                       meetingAdditionalNotes={meeting.notes}
                       confirmMeeting={confirmMeeting}
+                      declineMeeting={declineMeeting}
                     />
                   );
                 })

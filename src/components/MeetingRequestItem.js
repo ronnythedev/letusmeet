@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
@@ -118,7 +118,13 @@ const MeetingRequestItem = (props) => {
           <Grid item xs={6} className={classes.buttonsContainer}>
             <Grid container spacing={2}>
               <Grid item xs={6}>
-                <Button variant="contained" color="secondary">
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={() => {
+                    props.declineMeeting(props.meetingId);
+                  }}
+                >
                   Declinar
                 </Button>
               </Grid>

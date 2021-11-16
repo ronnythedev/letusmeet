@@ -120,7 +120,13 @@ const MeetingJoin = (props) => {
                   </span>
                 </Grid>
                 <Grid item xs={12}>
-                  <Webcam className={classes.video} />
+                  <Webcam
+                    className={classes.video}
+                    videoConstraints={{
+                      width: 1280,
+                      height: 720,
+                    }}
+                  />
                 </Grid>
                 <Grid item xs={12} className={classes.item}>
                   <span className={classes.warnText}>

@@ -89,7 +89,10 @@ const LiveVideoComponent = (props) => {
       );
 
       navigator.mediaDevices
-        .getUserMedia({ video: true, audio: true })
+        .getUserMedia({
+          video: { width: 1280, height: 720 },
+          audio: true,
+        })
         .then((stream) => {
           localStream.current = stream;
           localVideoRef.current.srcObject = localStream.current;

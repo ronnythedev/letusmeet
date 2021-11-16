@@ -104,3 +104,14 @@ export const confirmMeeting = async (meetingId) => {
     });
   return response;
 };
+
+export const declineMeeting = async (meetingId) => {
+  let response = await apiRequest("user/decline-meeting", "PATCH", {
+    meetingId: meetingId,
+  })
+    .then((response) => response)
+    .catch((error) => {
+      throw new Error(error.message);
+    });
+  return response;
+};
