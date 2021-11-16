@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
+import Paper from "@material-ui/core/Paper";
 import { makeStyles } from "@material-ui/core/styles";
 
 import { useAuth } from "../util/auth";
+
+import { toast } from "react-toastify";
 
 import UpcomingMeetingItem from "./UpcomingMeetingItem";
 import SimpleUserCard from "./SimpleUserCard";
@@ -14,6 +17,16 @@ import * as userServices from "../services/userServices";
 const useStyles = makeStyles((theme) => ({
   root: {
     padding: "10px",
+  },
+  noItemsContainer: {
+    padding: "20px",
+    display: "flex",
+    justifyContent: "center",
+    width: "99%",
+  },
+  noItemsMessage: {
+    fontSize: "20px",
+    fontWeight: "bold",
   },
 }));
 
@@ -27,7 +40,19 @@ const UpcomingMeetingList = () => {
   useEffect(() => {
     setIsLoading(true);
     userServices.getUpcomingMeetings().then((response) => {
-      setUpcomingMeetings(response.upcomingMeetings);
+      if (response.code === undefined || response.code === 200) {
+        setUpcomingMeetings(response.upcomingMeetings);
+      } else {
+        toast.error({
+          render:
+            "No se pudo consultar la información. Por favor intente de nuevo.",
+          type: "error",
+          isLoading: false,
+          theme: "colored",
+          autoClose: 6000,
+          closeOnClick: true,
+        });
+      }
       setIsLoading(false);
     });
   }, []);
@@ -47,31 +72,39 @@ const UpcomingMeetingList = () => {
         ) : (
           <Grid item xs={8}>
             <Grid container spacing={2}>
-              {upcomingMeetings.map((meeting) => {
-                return (
-                  <UpcomingMeetingItem
-                    key={meeting.id}
-                    attendeeFullName={
-                      meeting.attendee.firstName +
-                      " " +
-                      meeting.attendee.lastName
-                    }
-                    meetingDate={meeting.startDateTs}
-                    meetingHourKey={
-                      String(meeting.fromTime) + "-" + String(meeting.toTime)
-                    }
-                    organizerFullName={
-                      meeting.organizer.firstName +
-                      " " +
-                      meeting.organizer.lastName
-                    }
-                    meetingSubject={meeting.subject}
-                    meetingAdditionalNotes={meeting.notes}
-                    roomPin={meeting.roomPin}
-                    roomId={meeting.roomId}
-                  />
-                );
-              })}
+              {upcomingMeetings.length === 0 ? (
+                <Paper elevation={3} className={classes.noItemsContainer}>
+                  <span className={classes.noItemsMessage}>
+                    No hay próximas reuniones
+                  </span>
+                </Paper>
+              ) : (
+                upcomingMeetings.map((meeting) => {
+                  return (
+                    <UpcomingMeetingItem
+                      key={meeting.id}
+                      attendeeFullName={
+                        meeting.attendee.firstName +
+                        " " +
+                        meeting.attendee.lastName
+                      }
+                      meetingDate={meeting.startDateTs}
+                      meetingHourKey={
+                        String(meeting.fromTime) + "-" + String(meeting.toTime)
+                      }
+                      organizerFullName={
+                        meeting.organizer.firstName +
+                        " " +
+                        meeting.organizer.lastName
+                      }
+                      meetingSubject={meeting.subject}
+                      meetingAdditionalNotes={meeting.notes}
+                      roomPin={meeting.roomPin}
+                      roomId={meeting.roomId}
+                    />
+                  );
+                })
+              )}
             </Grid>
           </Grid>
         )}

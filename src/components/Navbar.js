@@ -65,7 +65,7 @@ function Navbar(props) {
       <AppBar position="static" color="transparent" elevation={0}>
         <Container disableGutters={true}>
           <Toolbar>
-            <Link to="/">
+            <Link to="/dashboard">
               <img src={logo} alt="Logo" className={classes.logo} />
             </Link>
             <div className={classes.spacer} />

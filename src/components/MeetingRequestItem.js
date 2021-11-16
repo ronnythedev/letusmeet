@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
@@ -8,6 +8,8 @@ import TimeIcon from "@material-ui/icons/ScheduleRounded";
 import MessageIcon from "@material-ui/icons/MessageRounded";
 import SubjectIcon from "@material-ui/icons/SubjectRounded";
 import { makeStyles } from "@material-ui/core/styles";
+
+import { format } from "date-fns";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -28,6 +30,35 @@ const useStyles = makeStyles((theme) => ({
 
 const MeetingRequestItem = (props) => {
   const classes = useStyles();
+
+  const processHourKey = (hourKey) => {
+    let firstHourAmPm = "AM";
+    let secondHourAmPm = "AM";
+
+    let hours = hourKey.split("-");
+
+    let firstHour = parseInt(hours[0]) / 100;
+
+    if (firstHour >= 12) {
+      firstHourAmPm = "PM";
+    }
+
+    if (firstHour > 12) {
+      firstHour = firstHour - 12;
+    }
+
+    let secondHour = parseInt(hours[1]) / 100;
+    if (secondHour >= 12) {
+      secondHourAmPm = "PM";
+    }
+
+    if (secondHour > 12) {
+      secondHour = secondHour - 12;
+    }
+
+    return `${firstHour}:00 ${firstHourAmPm} - ${secondHour}:00 ${secondHourAmPm}`;
+  };
+
   return (
     <Grid item xs={12} className={classes.root}>
       <Paper elevation={3}>
@@ -35,7 +66,7 @@ const MeetingRequestItem = (props) => {
           <Grid item xs={6}>
             <Grid container spacing={2} className={classes.infoContainer}>
               <Grid item xs={12}>
-                <Box className={classes.userName}>{props.name}</Box>
+                <Box className={classes.userName}>{props.attendeeFullName}</Box>
               </Grid>
               <Grid item xs={12}>
                 <Grid container spacing={2}>
@@ -43,7 +74,10 @@ const MeetingRequestItem = (props) => {
                     <CalendarIcon />
                   </Grid>
                   <Grid item xs={11}>
-                    <span>Fecha de Reunión: {props.meetingDate}</span>
+                    <span>
+                      Fecha de Reunión:{" "}
+                      {format(parseInt(props.meetingDate), "dd/MMMM/yyyy")}
+                    </span>
                   </Grid>
                 </Grid>
               </Grid>
@@ -53,7 +87,7 @@ const MeetingRequestItem = (props) => {
                     <TimeIcon />
                   </Grid>
                   <Grid item xs={11}>
-                    <span>Hora: {props.meetingTime}</span>
+                    <span>Hora: {processHourKey(props.meetingHourKey)}</span>
                   </Grid>
                 </Grid>
               </Grid>
@@ -89,7 +123,13 @@ const MeetingRequestItem = (props) => {
                 </Button>
               </Grid>
               <Grid item xs={6}>
-                <Button variant="contained" color="primary">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => {
+                    props.confirmMeeting(props.meetingId);
+                  }}
+                >
                   Confirmar
                 </Button>
               </Grid>

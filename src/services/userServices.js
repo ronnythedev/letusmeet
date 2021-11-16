@@ -73,11 +73,31 @@ export const getUpcomingMeetings = async () => {
   return response;
 };
 
+export const getUpcomingPendingMeetings = async () => {
+  let response = await apiRequest("user/upcoming-pending-meetings", "GET")
+    .then((response) => response)
+    .catch((error) => {
+      throw new Error(error.message);
+    });
+  return response;
+};
+
 export const validateMeetingRoomPin = async (roomId, enteredRoomPin) => {
   let response = await apiRequest(
     `user/validate-room-pin/${roomId}/${enteredRoomPin}`,
     "GET"
   )
+    .then((response) => response)
+    .catch((error) => {
+      throw new Error(error.message);
+    });
+  return response;
+};
+
+export const confirmMeeting = async (meetingId) => {
+  let response = await apiRequest("user/confirm-meeting", "PATCH", {
+    meetingId: meetingId,
+  })
     .then((response) => response)
     .catch((error) => {
       throw new Error(error.message);
