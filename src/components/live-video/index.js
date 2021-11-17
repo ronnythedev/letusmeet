@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
     padding: "5px",
   },
   videoContainer: {
-    minHeight: "500px",
+    minHeight: "580px",
     padding: "15px !important",
   },
   bigVideo: {
@@ -32,15 +32,18 @@ const useStyles = makeStyles((theme) => ({
   },
   smallVideo: {
     backgroundColor: "#4A4E51",
-    position: "absolute",
-    minHeight: "135px",
-    minWidth: "235px",
-    bottom: "240px",
-    marginRight: "20px",
+    border: "none",
+    boxShadow: "none",
     borderRadius: "4px",
-    right: "0px",
+    height: "20%",
     marginRight: "17%",
     marginLeft: "15%",
+    display: "flex",
+    justifyContent: "center",
+    position: "absolute",
+    right: "0px",
+    minWidth: "20%",
+    bottom: "20%",
   },
   videoSmallElement: {
     position: "absolute",
@@ -48,8 +51,8 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
   },
   videoLargeElement: {
-    // height: "100%",
-    // width: "100%",
+    height: "100%",
+    width: "100%",
   },
   modalContainer: {
     position: "absolute",
