@@ -90,7 +90,7 @@ const MeetingJoin = (props) => {
           type: "success",
           isLoading: false,
           theme: "colored",
-          autoClose: 6000,
+          autoClose: 1000,
           closeOnClick: true,
         });
         history.push("/live-video/" + roomId);

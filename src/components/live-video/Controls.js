@@ -94,7 +94,7 @@ const VideoControls = (props) => {
               </IconButton>
             </Grid>
             <Grid item xs={4} className={classes.controlItem}>
-              <IconButton className={classes.redButton}>
+              <IconButton className={classes.redButton} onClick={props.hangUp}>
                 <HangUp />
               </IconButton>
             </Grid>

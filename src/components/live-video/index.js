@@ -64,6 +64,10 @@ const useStyles = makeStyles((theme) => ({
     left: "50%",
     transform: `translate(-50%, -50%)`,
   },
+  title: {
+    fontSize: "20px",
+    fontWeight: "bold",
+  },
 }));
 
 const LiveVideoComponent = (props) => {
@@ -76,6 +80,10 @@ const LiveVideoComponent = (props) => {
   const [cameraIsOn, setCameraIsOn] = useState(true);
   const [dataReady, setDataReady] = useState(true);
   const [showMessageModal, setShowMessageModal] = useState(false);
+  const [modalMessageTitle, setModalMessageTitle] = useState("");
+  const [modalMessageBody, setModalMessageBody] = useState("");
+  const [modalMessageBody2, setModalMessageBody2] = useState("");
+  const [meetingFinished, setMeetingFinished] = useState(false);
 
   const localVideoRef = useRef();
   const remoteVideoRef = useRef();
@@ -100,7 +108,7 @@ const LiveVideoComponent = (props) => {
           localStream.current = stream;
           localVideoRef.current.srcObject = localStream.current;
 
-          socketRef.current.emit("join room", roomID);
+          socketRef.current.emit("join room", props.roomId);
 
           socketRef.current.on("all users", (otherUsers) => {
             // Escenario:
@@ -140,17 +148,47 @@ const LiveVideoComponent = (props) => {
             const item = peersRef.current.find((p) => p.peerID === payload.id);
             item.peer.signal(payload.signal);
           });
+
+          socketRef.current.on("user left", (payload) => {
+            // if (payload[0] === socketRef.current.id) {
+            //   console.log("The other user left the call");
+            // } else {
+            //   console.log("You left the call");
+            // }
+            setMeetingFinished(true);
+          });
         });
     }
     history.replace("/live-video");
+
+    window.addEventListener("beforeunload", hangUp);
+
+    return () => window.removeEventListener("beforeunload", hangUp);
   }, []);
 
   useEffect(() => {
     if (props.roomId === undefined && roomID === undefined) {
+      setModalMessageTitle("No se encuentran datos");
+      setModalMessageBody("No hay datos de reunión o la reunión ya finalizó.");
+      setModalMessageBody2(
+        "Por favor cierre esta ventana y vuelva a intentar."
+      );
+
       setShowMessageModal(true);
       setDataReady(false);
     }
   }, [props.roomId, roomID]);
+
+  useEffect(() => {
+    if (meetingFinished) {
+      setModalMessageTitle("Reunión Finalizada");
+      setModalMessageBody("");
+      setModalMessageBody2("");
+
+      setShowMessageModal(true);
+      setDataReady(false);
+    }
+  }, [meetingFinished]);
 
   const createPeer = (userToSignal, callerID, stream) => {
     const peer = new Peer({
@@ -194,6 +232,12 @@ const LiveVideoComponent = (props) => {
     return peer;
   };
 
+  const hangUp = () => {
+    socketRef.current.emit("gonnaleave");
+    peersRef.current[0].peer.destroy();
+    setMeetingFinished(true);
+  };
+
   return (
     <>
       <Box sx={{ flexGrow: 1 }} className={classes.root}>
@@ -223,15 +267,13 @@ const LiveVideoComponent = (props) => {
               setMicIsOn={setMicIsOn}
               cameraIsOn={cameraIsOn}
               setCameraIsOn={setCameraIsOn}
+              hangUp={hangUp}
               meetingId=""
             />
           </Grid>
         ) : null}
         <Modal
           open={showMessageModal}
-          // onClose={() => {
-          //   setShowMessageModal(false);
-          // }}
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
         >
@@ -239,16 +281,14 @@ const LiveVideoComponent = (props) => {
             <Paper elevation={3} className={classes.modalContainer}>
               <Grid container spacing={2}>
                 <Grid item xs={12}>
-                  <span className={classes.title}>No se encuentran datos</span>
+                  <span className={classes.title}>{modalMessageTitle}</span>
                 </Grid>
                 <Grid item xs={12}>
                   <p>
-                    <span>No hay datos de reunión. No se puede iniciar.</span>
+                    <span>{modalMessageBody}</span>
                   </p>
                   <p>
-                    <span>
-                      Por favor cierre esta ventana y vuelva a intentar.
-                    </span>
+                    <span>{modalMessageBody2}</span>
                   </p>
                 </Grid>
                 <Grid item xs={12}>
