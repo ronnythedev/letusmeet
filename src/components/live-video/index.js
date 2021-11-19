@@ -181,6 +181,7 @@ const LiveVideoComponent = (props) => {
 
   useEffect(() => {
     if (meetingFinished) {
+      stopStream();
       setModalMessageTitle("Reunión Finalizada");
       setModalMessageBody("");
       setModalMessageBody2("");
@@ -189,6 +190,22 @@ const LiveVideoComponent = (props) => {
       setDataReady(false);
     }
   }, [meetingFinished]);
+
+  useEffect(() => {
+    if (localStream.current) {
+      localStream.current
+        .getVideoTracks()
+        .forEach((track) => (track.enabled = !track.enabled));
+    }
+  }, [cameraIsOn]);
+
+  useEffect(() => {
+    if (localStream.current) {
+      localStream.current
+        .getAudioTracks()
+        .forEach((track) => (track.enabled = !track.enabled));
+    }
+  }, [micIsOn]);
 
   const createPeer = (userToSignal, callerID, stream) => {
     const peer = new Peer({
@@ -235,7 +252,19 @@ const LiveVideoComponent = (props) => {
   const hangUp = () => {
     socketRef.current.emit("gonnaleave");
     peersRef.current[0].peer.destroy();
+    stopStream();
+    localVideoRef.current = null;
+    remoteVideoRef.current = null;
     setMeetingFinished(true);
+  };
+
+  const stopStream = () => {
+    localStream.current.getAudioTracks().forEach((track) => {
+      track.stop();
+    });
+    localStream.current.getVideoTracks().forEach((track) => {
+      track.stop();
+    });
   };
 
   return (
