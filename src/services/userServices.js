@@ -115,3 +115,14 @@ export const declineMeeting = async (meetingId) => {
     });
   return response;
 };
+
+export const cancelMeeting = async (meetingId) => {
+  let response = await apiRequest("user/cancel-meeting", "PATCH", {
+    meetingId: meetingId,
+  })
+    .then((response) => response)
+    .catch((error) => {
+      throw new Error(error.message);
+    });
+  return response;
+};

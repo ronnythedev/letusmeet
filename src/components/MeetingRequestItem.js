@@ -118,26 +118,43 @@ const MeetingRequestItem = (props) => {
           <Grid item xs={6} className={classes.buttonsContainer}>
             <Grid container spacing={2}>
               <Grid item xs={6}>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => {
-                    props.declineMeeting(props.meetingId);
-                  }}
-                >
-                  Declinar
-                </Button>
+                {props.type === 1 ? (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => {
+                      props.cancelMeeting(props.meetingId);
+                    }}
+                    disabled={props.isLoading}
+                  >
+                    Cancelar
+                  </Button>
+                ) : (
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => {
+                      props.declineMeeting(props.meetingId);
+                    }}
+                    disabled={props.isLoading}
+                  >
+                    Declinar
+                  </Button>
+                )}
               </Grid>
               <Grid item xs={6}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => {
-                    props.confirmMeeting(props.meetingId);
-                  }}
-                >
-                  Confirmar
-                </Button>
+                {props.type === 2 ? (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => {
+                      props.confirmMeeting(props.meetingId);
+                    }}
+                    disabled={props.isLoading}
+                  >
+                    Confirmar
+                  </Button>
+                ) : null}
               </Grid>
             </Grid>
           </Grid>
