@@ -1,3 +1,6 @@
+## 👉 Example
+An example of this app is running here: https://www.myplanapp.info. (for now only in Spanish, multi-language version upcoming)
+
 ## 👉 Get Started
 
 0. Download and install [Nodejs](https://nodejs.org/en/download/) in your computer (LTS version).
@@ -21,6 +24,12 @@
    ```
    JWT_SECRET=thesecretvalue
    ```
+   
+   2.3 Since the app is agnostic to the domain where it's going to run, the following variable is required to build user's public calendar page:
+   
+   ```
+   REACT_APP_DOMAIN=http://localhost
+   ```
 
 3. No you can view the website at `http://localhost:3000``
 
@@ -35,6 +44,6 @@ This project uses the following libraries and services:
 - UI Kit - [Material UI](https://material-ui.com)
 - Authentication - Custom JWT implementation
 - Database - MongoDB
-- Contact Form - [Formspree](https://formspree.io)
-- Analytics - [Google Analytics](https://googleanalytics.com)
-- Hosting - TBD: Probably AWS Amplify
+- Hosted in AWS Amplify
+- Contact Form - [Formspree](https://formspree.io) (in the pipeline)
+- Analytics - [Google Analytics](https://googleanalytics.com) (in the pipeline)
