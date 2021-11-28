@@ -17,7 +17,7 @@ export function apiRequest(path, method = "GET", data) {
         // The challenge is that the user is inside a React hook (auth) therefore the signout
         // method cannot be called from this util.
         // May I want to change this util into a hook?
-        if (response.code === "auth/invalid-user-token") {
+        if (response.code === 403) {
         }
         throw new CustomError(response.code, response.message);
       } else {

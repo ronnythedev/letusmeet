@@ -7,22 +7,24 @@ import { Link } from "./../util/router.js";
 import Hidden from "@material-ui/core/Hidden";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
-import NotificationIcon from "@material-ui/icons/Notifications";
 import Button from "@material-ui/core/Button";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import Divider from "@material-ui/core/Divider";
+import Box from "@material-ui/core/Box";
 import NightsStayIcon from "@material-ui/icons/NightsStay";
 import WbSunnyIcon from "@material-ui/icons/WbSunny";
 import Drawer from "@material-ui/core/Drawer";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
-import Badge from "@material-ui/core/Badge";
+
 import { useAuth } from "./../util/auth.js";
 import { useDarkMode } from "./../util/theme.js";
 import { makeStyles } from "@material-ui/core/styles";
+
+import * as userServices from "../services/userServices";
 
 const useStyles = makeStyles((theme) => ({
   logo: {
@@ -35,6 +37,18 @@ const useStyles = makeStyles((theme) => ({
   spacer: {
     flexGrow: 1,
   },
+  warning: {
+    padding: "10px",
+    textAlign: "center",
+    backgroundColor: "darkorange",
+  },
+  userLogged: {
+    borderRightStyle: "solid",
+    borderRightColor: "gray",
+    borderRightWidth: "1px",
+    paddingRight: "10px",
+    fontWeight: "bold",
+  },
 }));
 
 function Navbar(props) {
@@ -44,6 +58,7 @@ function Navbar(props) {
   const darkMode = useDarkMode();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [menuState, setMenuState] = useState(null);
+  const [sending, setSending] = useState(0);
 
   // Use inverted logo if specified
   // and we are in dark mode
@@ -54,6 +69,21 @@ function Navbar(props) {
     // Store clicked element (to anchor the menu to)
     // and the menu id so we can tell which menu is open.
     setMenuState({ anchor: event.currentTarget, id });
+  };
+
+  const resendConfirmationEmail = () => {
+    setSending(1);
+
+    userServices.resendConfirmationEmail().then((response) => {
+      if (response.code === undefined || response.code === 200) {
+        setSending(2);
+        setTimeout(() => {
+          setSending(0);
+        }, 3000);
+      } else {
+        alert("Hubo un error al enviar email de confirmación");
+      }
+    });
   };
 
   const handleCloseMenu = () => {
@@ -69,6 +99,14 @@ function Navbar(props) {
               <img src={logo} alt="Logo" className={classes.logo} />
             </Link>
             <div className={classes.spacer} />
+            {auth.user && auth.user.firstName && auth.user.lastName && (
+              <>
+                <div className={classes.userLogged}>
+                  {auth.user.firstName + " " + auth.user.lastName}
+                </div>
+              </>
+            )}
+
             <Hidden smUp={true} implementation="css">
               <IconButton
                 onClick={() => {
@@ -185,13 +223,18 @@ function Navbar(props) {
 
           {auth.user && (
             <>
-              <ListItem button={true} component={Link} to="/dashboard">
-                <ListItemText>Pantalla Principal</ListItemText>
-              </ListItem>
-
-              <ListItem button={true} component={Link} to="/settings/general">
-                <ListItemText>Configuración</ListItemText>
-              </ListItem>
+              <MenuItem component={Link} to="/dashboard">
+                Fechas Disponibles
+              </MenuItem>
+              <MenuItem component={Link} to="/upcoming-meetings-list">
+                Próximas Reuniones
+              </MenuItem>
+              <MenuItem component={Link} to="/meeting-request-list">
+                Solicitudes Pendientes
+              </MenuItem>
+              <MenuItem component={Link} to="/settings/general">
+                Configuración
+              </MenuItem>
 
               <Divider />
               <ListItem
@@ -204,11 +247,11 @@ function Navbar(props) {
               </ListItem>
             </>
           )}
-          <ListItem>
+          {/* <ListItem>
             <Badge badgeContent={4} color="primary">
               <NotificationIcon />
             </Badge>
-          </ListItem>
+          </ListItem> */}
           <ListItem>
             <IconButton
               color="inherit"
@@ -222,6 +265,28 @@ function Navbar(props) {
           </ListItem>
         </List>
       </Drawer>
+      {auth.user && !auth.user.isEmailConfirmed && (
+        <Box className={classes.warning}>
+          <span>
+            Debes confirmar tu email. Algunas opciones no estarán disponibles
+            hasta que no realices esta acción.
+          </span>
+          &nbsp;
+          {sending === 1 ? (
+            <span>
+              <b>Enviando...</b>
+            </span>
+          ) : sending === 2 ? (
+            <span>
+              <b>¡Email enviado!</b>
+            </span>
+          ) : (
+            <a href="#" onClick={resendConfirmationEmail}>
+              Reenviar Email de Confirmación
+            </a>
+          )}
+        </Box>
+      )}
     </Section>
   );
 }

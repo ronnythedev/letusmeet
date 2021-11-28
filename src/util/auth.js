@@ -96,10 +96,9 @@ function useAuthProvider() {
     // [INTEGRATING AN AUTH SERVICE]: If not passing in "code" as the second
     // arg above then make sure getFromQueryString() below has the correct
     // url parameter name (it might not be "code").
-
     // Get code from query string object
-    const resetCode = code || getFromQueryString("code");
-    return fakeAuth.confirmPasswordReset(password, resetCode);
+    //const resetCode = code || getFromQueryString("code");
+    //return fakeAuth.confirmPasswordReset(password, resetCode);
   };
 
   const updateEmail = (email) => {
@@ -228,6 +227,20 @@ export const requireAuth = (Component) => {
       // Redirect if not signed in
       if (auth.user === false) {
         history.replace("/auth/signin");
+      }
+
+      const accessToken = localStorage.getItem("at");
+      if (!accessToken) {
+        auth.signout();
+      } else {
+        try {
+          var decoded = jwt.verify(
+            accessToken,
+            process.env.REACT_APP_JWT_SECRET
+          );
+        } catch (err) {
+          auth.signout();
+        }
       }
     }, [auth]);
 

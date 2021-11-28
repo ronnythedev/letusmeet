@@ -1,6 +1,7 @@
 import React from "react";
 import UpcomingMeetingList from "../components/UpcomingMeetingList";
 import PageTitle from "../components/PageTitle";
+import { requireAuth } from "./../util/auth.js";
 
 const UpcomingMeetingsListPage = () => {
   return (
@@ -11,4 +12,4 @@ const UpcomingMeetingsListPage = () => {
   );
 };
 
-export default UpcomingMeetingsListPage;
+export default requireAuth(UpcomingMeetingsListPage);

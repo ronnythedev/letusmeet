@@ -40,46 +40,46 @@ export async function updateUser(uid, data) {
 
 // Fetch item data (hook)
 export function useItem(id) {
-  const cacheKey = ["item", { id }];
-  const query = () => apiRequest(`item/${id}`);
-  return useQuery(cacheKey, query, { enabled: !!id });
+  // const cacheKey = ["item", { id }];
+  // const query = () => apiRequest(`item/${id}`);
+  // return useQuery(cacheKey, query, { enabled: !!id });
 }
 
 // Fetch all items by owner (hook)
 export function useItemsByOwner(owner) {
-  const cacheKey = ["items", { owner }];
-  const query = () => apiRequest(`items?owner=${owner}`);
-  return useQuery(cacheKey, query, { enabled: !!owner });
+  // const cacheKey = ["items", { owner }];
+  // const query = () => apiRequest(`items?owner=${owner}`);
+  // return useQuery(cacheKey, query, { enabled: !!owner });
 }
 
 // Create a new item
 export async function createItem(data) {
-  const response = await apiRequest("item", "POST", data);
-  // Invalidate and refetch queries that could have old data
-  await queryClient.invalidateQueries(["items"]);
-  return response;
+  // const response = await apiRequest("item", "POST", data);
+  // // Invalidate and refetch queries that could have old data
+  // await queryClient.invalidateQueries(["items"]);
+  // return response;
 }
 
 // Update an item
 export async function updateItem(id, data) {
-  const response = await apiRequest(`item/${id}`, "PATCH", data);
-  // Invalidate and refetch queries that could have old data
-  await Promise.all([
-    queryClient.invalidateQueries(["item", { id }]),
-    queryClient.invalidateQueries(["items"]),
-  ]);
-  return response;
+  // const response = await apiRequest(`item/${id}`, "PATCH", data);
+  // // Invalidate and refetch queries that could have old data
+  // await Promise.all([
+  //   queryClient.invalidateQueries(["item", { id }]),
+  //   queryClient.invalidateQueries(["items"]),
+  // ]);
+  // return response;
 }
 
 // Delete an item
 export async function deleteItem(id) {
-  const response = await apiRequest(`item/${id}`, "DELETE");
-  // Invalidate and refetch queries that could have old data
-  await Promise.all([
-    queryClient.invalidateQueries(["item", { id }]),
-    queryClient.invalidateQueries(["items"]),
-  ]);
-  return response;
+  // const response = await apiRequest(`item/${id}`, "DELETE");
+  // // Invalidate and refetch queries that could have old data
+  // await Promise.all([
+  //   queryClient.invalidateQueries(["item", { id }]),
+  //   queryClient.invalidateQueries(["items"]),
+  // ]);
+  // return response;
 }
 
 // React Query context provider that wraps our app

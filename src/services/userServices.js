@@ -126,3 +126,12 @@ export const cancelMeeting = async (meetingId) => {
     });
   return response;
 };
+
+export const resendConfirmationEmail = async () => {
+  let response = await apiRequest("user/resend-confirmation-email", "POST")
+    .then((response) => response)
+    .catch((error) => {
+      throw new Error(error.message);
+    });
+  return response;
+};
