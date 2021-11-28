@@ -15,6 +15,7 @@ import LiveVideoPage from "./live-video";
 import SettingsPage from "./settings";
 import PurchasePage from "./purchase";
 import AuthPage from "./auth";
+import EmailConfirmPage from "./email-confirm";
 import { Switch, Route, Router } from "./../util/router.js";
 import NotFoundPage from "./not-found.js";
 import Footer from "./../components/Footer";
@@ -49,6 +50,12 @@ function App(props) {
                 <Route exact path="/contact" component={ContactPage} />
 
                 <Route exact path="/dashboard" component={DashboardPage} />
+
+                <Route
+                  exact
+                  path="/email-confirm/:token"
+                  component={EmailConfirmPage}
+                />
 
                 <Route
                   exact

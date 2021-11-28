@@ -135,3 +135,12 @@ export const resendConfirmationEmail = async () => {
     });
   return response;
 };
+
+export const confirmEmail = async (token) => {
+  let response = await apiRequest(`user/email-confirm/${token}`, "POST")
+    .then((response) => response)
+    .catch((error) => {
+      throw new Error(error.message);
+    });
+  return response;
+};
