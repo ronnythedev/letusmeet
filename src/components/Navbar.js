@@ -169,7 +169,7 @@ function Navbar(props) {
                       Solicitudes Pendientes
                     </MenuItem>
                     <MenuItem component={Link} to="/settings/general">
-                      Configuración
+                      Mi Perfil
                     </MenuItem>
 
                     <Divider />
@@ -233,7 +233,7 @@ function Navbar(props) {
                 Solicitudes Pendientes
               </MenuItem>
               <MenuItem component={Link} to="/settings/general">
-                Configuración
+                Mi Perfil
               </MenuItem>
 
               <Divider />

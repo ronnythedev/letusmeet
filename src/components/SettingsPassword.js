@@ -18,14 +18,26 @@ function SettingsPassword(props) {
 
     auth
       .updatePassword(data.pass)
-      .then(() => {
-        // Clear form
+      .then((response) => {
         reset();
-        // Set success status
-        props.onStatus({
-          type: "success",
-          message: "Your password has been updated",
-        });
+
+        if (response.code === undefined || response.code === 200) {
+          props.onStatus({
+            type: "success",
+            message: "¡Tu contraseña se ha actualizado!",
+          });
+        } else if (response.code === 404) {
+          props.onStatus({
+            type: "error",
+            message:
+              "No se pudo encontrar un usuario para actualizar contraseña",
+          });
+        } else {
+          props.onStatus({
+            type: "error",
+            message: "Hubo un error y no se pudo actualizar la contraseña",
+          });
+        }
       })
       .catch((error) => {
         if (error.code === "auth/requires-recent-login") {
@@ -56,14 +68,14 @@ function SettingsPassword(props) {
           <TextField
             variant="outlined"
             type="password"
-            label="Password"
+            label="Nueva Contraseña"
             name="pass"
-            placeholder="Password"
+            placeholder="Nueva Contraseña"
             error={errors.pass ? true : false}
             helperText={errors.pass && errors.pass.message}
             fullWidth={true}
             inputRef={register({
-              required: "Please enter a password",
+              required: "Por favor ingresa la contraseña",
             })}
           />
         </Grid>
@@ -71,19 +83,19 @@ function SettingsPassword(props) {
           <TextField
             variant="outlined"
             type="password"
-            label="Confirm New Password"
+            label="Confirme nueva contraseña"
             name="confirmPass"
-            placeholder="Confirm Password"
+            placeholder="Confirmación de Contraseña"
             error={errors.confirmPass ? true : false}
             helperText={errors.confirmPass && errors.confirmPass.message}
             fullWidth={true}
             inputRef={register({
-              required: "Please enter your new password again",
+              required: "Por favor ingresa la nueva contraseña otra vez",
               validate: (value) => {
                 if (value === getValues().pass) {
                   return true;
                 } else {
-                  return "This doesn't match your password";
+                  return "Este valor no concuerda con tu nueva contraseña";
                 }
               },
             })}
@@ -98,7 +110,7 @@ function SettingsPassword(props) {
             disabled={pending}
             fullWidth={true}
           >
-            {!pending && <span>Save</span>}
+            {!pending && <span>Guardar</span>}
 
             {pending && <CircularProgress size={28} />}
           </Button>

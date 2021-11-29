@@ -53,15 +53,31 @@ function SettingsGeneral(props) {
           <TextField
             variant="outlined"
             type="text"
-            label="Name"
-            name="name"
-            placeholder="Name"
-            defaultValue={auth.user.name}
-            error={errors.name ? true : false}
-            helperText={errors.name && errors.name.message}
+            label="Nombrre"
+            name="firstName"
+            placeholder="Nombre"
+            defaultValue={auth.user.firstName}
+            error={errors.firstName ? true : false}
+            helperText={errors.firstName && errors.firstName.message}
             fullWidth={true}
             inputRef={register({
-              required: "Please enter your name",
+              required: "Por favor ingresa tu nombre",
+            })}
+          />
+        </Grid>
+        <Grid item={true} xs={12}>
+          <TextField
+            variant="outlined"
+            type="text"
+            label="Apellido"
+            name="lastName"
+            placeholder="Apellido"
+            defaultValue={auth.user.lastName}
+            error={errors.lastName ? true : false}
+            helperText={errors.lastName && errors.lastName.message}
+            fullWidth={true}
+            inputRef={register({
+              required: "Por favor ingresa tu apellido",
             })}
           />
         </Grid>

@@ -19,18 +19,18 @@ function SettingsNav(props) {
       ></Tab>
 
       <Tab
-        label="Password"
+        label="Contraseña"
         value="password"
         component={Link}
         to="/settings/password"
       ></Tab>
 
-      <Tab
+      {/* <Tab
         label="Billing"
         value="billing"
         component={Link}
         to="/settings/billing"
-      ></Tab>
+      ></Tab> */}
     </Tabs>
   );
 }

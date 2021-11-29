@@ -124,7 +124,11 @@ function useAuthProvider() {
   };
 
   const updatePassword = (password) => {
-    return fakeAuth.updatePassword(password);
+    return apiRequest(`user/password-reset/${password}`, "POST")
+      .then((response) => response)
+      .catch((error) => {
+        throw new Error(error.message);
+      });
   };
 
   // Update auth user and persist to database (including any custom values in data)
