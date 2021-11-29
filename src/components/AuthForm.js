@@ -23,23 +23,56 @@ function AuthForm(props) {
       });
     },
     forgotpass: ({ email }) => {
-      return auth.sendPasswordResetEmail(email).then(() => {
+      return auth.sendPasswordResetEmail(email).then((response) => {
+        if (response.code === undefined || response.code === 200) {
+          props.onFormAlert({
+            type: "success",
+            message: "Se envió un email para restablecer el password",
+          });
+        } else if (response.code === 404) {
+          props.onFormAlert({
+            type: "error",
+            message: "Email no existe",
+          });
+        } else {
+          props.onFormAlert({
+            type: "error",
+            message: "Hubo un error y no se pudo enviar el email",
+          });
+        }
         setPending(false);
-        // Show success alert message
-        props.onFormAlert({
-          type: "success",
-          message: "Se envió un email para restablecer el password",
-        });
       });
     },
     changepass: ({ pass }) => {
-      return auth.confirmPasswordReset(pass).then(() => {
+      return auth.confirmPasswordReset(pass).then((response) => {
+        if (response.code === undefined || response.code === 200) {
+          props.onFormAlert({
+            type: "success",
+            message: "Tu password se actualizó correctamente",
+          });
+        } else if (response.code === 400) {
+          props.onFormAlert({
+            type: "error",
+            message: "Falta información. No se puede actualizar la contraseña",
+          });
+        } else if (response.code === 404) {
+          props.onFormAlert({
+            type: "error",
+            message: "Token inválido. No se puede actualizar la contraseña",
+          });
+        } else if (response.code === 410) {
+          props.onFormAlert({
+            type: "error",
+            message:
+              "El enlance utilizado ya expiró. Por favor solicite uno nuevo",
+          });
+        } else {
+          props.onFormAlert({
+            type: "error",
+            message: "Hubo un error y no se pudo actualizar la contraseña",
+          });
+        }
         setPending(false);
-        // Show success alert message
-        props.onFormAlert({
-          type: "success",
-          message: "Tu password se actualizó correctamente",
-        });
       });
     },
   };
@@ -56,12 +89,34 @@ function AuthForm(props) {
       email,
       pass,
     }).catch((error) => {
+      if (props.type === "signin") {
+        if (error.message === "Cannot Sign In. Invalid credentials.") {
+          props.onFormAlert({
+            type: "error",
+            message: "El email y constraseña ingresados son inválidos",
+          });
+        } else {
+          props.onFormAlert({
+            type: "error",
+            message: "Se produjo un error y no se pudo ingresar",
+          });
+        }
+      } else if (props.type === "signup") {
+        if (
+          error.message === "User already exists, please try to login instead."
+        ) {
+          props.onFormAlert({
+            type: "error",
+            message: "El usuario ya existe, intente ingresar con constraseña.",
+          });
+        } else {
+          props.onFormAlert({
+            type: "error",
+            message: `Hubo un error al crear el usuario. Por favor vuelva a intentar. Ref: ${error.message}`,
+          });
+        }
+      }
       setPending(false);
-      // Show error alert message
-      props.onFormAlert({
-        type: "error",
-        message: error.message,
-      });
     });
   };
 

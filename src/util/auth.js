@@ -63,7 +63,13 @@ function useAuthProvider() {
       email,
       password,
     })
-      .then((response) => handleAuth(response.user))
+      .then((response) => {
+        if (response.code === undefined || response.code === 200) {
+          handleAuth(response.user);
+        } else if (response.status === "error") {
+          throw new Error(response.message);
+        }
+      })
       .catch((error) => {
         throw new Error(error.message);
       });
@@ -71,7 +77,13 @@ function useAuthProvider() {
 
   const signin = (email, password) => {
     return apiRequest("user/signin", "POST", { email, password })
-      .then((response) => handleAuth(response.user))
+      .then((response) => {
+        if (response.code === undefined || response.code === 200) {
+          handleAuth(response.user);
+        } else if (response.status === "error") {
+          throw new Error(response.message);
+        }
+      })
       .catch((error) => {
         throw new Error(error.message);
       });
@@ -89,16 +101,20 @@ function useAuthProvider() {
   };
 
   const sendPasswordResetEmail = (email) => {
-    return fakeAuth.sendPasswordResetEmail(email);
+    return apiRequest(`user/password-reset-email/${email}`, "POST")
+      .then((response) => response)
+      .catch((error) => {
+        throw new Error(error.message);
+      });
   };
 
   const confirmPasswordReset = (password, code) => {
-    // [INTEGRATING AN AUTH SERVICE]: If not passing in "code" as the second
-    // arg above then make sure getFromQueryString() below has the correct
-    // url parameter name (it might not be "code").
-    // Get code from query string object
-    //const resetCode = code || getFromQueryString("code");
-    //return fakeAuth.confirmPasswordReset(password, resetCode);
+    const resetCode = code || getFromQueryString("token");
+    return apiRequest(`user/password-reset/${resetCode}/${password}`, "POST")
+      .then((response) => response)
+      .catch((error) => {
+        throw new Error(error.message);
+      });
   };
 
   const updateEmail = (email) => {
