@@ -6,8 +6,8 @@ import React, {
   createContext,
 } from "react";
 import queryString from "query-string";
-import fakeAuth from "fake-auth";
-import { useUser, createUser, updateUser } from "./db";
+
+import { useUser } from "./db";
 import { history } from "./router";
 import PageLoader from "./../components/PageLoader";
 import { apiRequest } from "./util";
@@ -142,8 +142,9 @@ function useAuthProvider() {
     })
       .then((response) => {
         if (response.code === undefined || response.code === 200) {
-          console.log("user returned: ", response.user);
           setUser(response.user);
+          //TODO: need to invalidate query with old values. for now just refresh
+          window.location.reload();
         } else if (response.status === "error") {
           throw new Error(response.message);
         }

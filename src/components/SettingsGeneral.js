@@ -53,7 +53,7 @@ function SettingsGeneral(props) {
           <TextField
             variant="outlined"
             type="text"
-            label="Nombrre"
+            label="Nombre"
             name="firstName"
             placeholder="Nombre"
             defaultValue={auth.user.firstName}
