@@ -6,7 +6,9 @@ import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { makeStyles } from "@material-ui/core/styles";
+import { useHistory } from "react-router";
 
+import { useAuth } from "../util/auth";
 import * as userServices from "../services/userServices";
 
 const useStyles = makeStyles((theme) => ({
@@ -35,6 +37,8 @@ const useStyles = makeStyles((theme) => ({
 
 const EmailConfirm = (props) => {
   const classes = useStyles();
+  const auth = useAuth();
+  const history = useHistory();
 
   const [isLoading, setIsLoading] = useState(false);
   const [pageMessageBody, setPageMessageBody] = useState("");
@@ -55,7 +59,11 @@ const EmailConfirm = (props) => {
       userServices.confirmEmail(props.token).then((response) => {
         if (response.code === undefined || response.code === 200) {
           setPageMessageBody("¡La confirmación se realizó con éxito!");
-          setPageMessageBody2("");
+          setPageMessageBody2("Redirigiendo a Ingreso...");
+          auth.signout();
+          setTimeout(() => {
+            history.push("/auth/signin");
+          }, 4000);
         } else if (response.code === 404) {
           setPageMessageBody("La información proveída es incorrecta.");
           setPageMessageBody2("No se puede confirmar email.");

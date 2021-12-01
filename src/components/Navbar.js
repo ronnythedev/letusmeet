@@ -265,28 +265,30 @@ function Navbar(props) {
           </ListItem>
         </List>
       </Drawer>
-      {auth.user && !auth.user.isEmailConfirmed && (
-        <Box className={classes.warning}>
-          <span>
-            Debes confirmar tu email. Algunas opciones no estarán disponibles
-            hasta que no realices esta acción.
-          </span>
-          &nbsp;
-          {sending === 1 ? (
+      {auth.user &&
+        auth.user.isEmailConfirmed !== undefined &&
+        !auth.user.isEmailConfirmed && (
+          <Box className={classes.warning}>
             <span>
-              <b>Enviando...</b>
+              Debes confirmar tu email. Algunas opciones no estarán disponibles
+              hasta que no realices esta acción.
             </span>
-          ) : sending === 2 ? (
-            <span>
-              <b>¡Email enviado!</b>
-            </span>
-          ) : (
-            <a href="#" onClick={resendConfirmationEmail}>
-              Reenviar Email de Confirmación
-            </a>
-          )}
-        </Box>
-      )}
+            &nbsp;
+            {sending === 1 ? (
+              <span>
+                <b>Enviando...</b>
+              </span>
+            ) : sending === 2 ? (
+              <span>
+                <b>¡Email enviado!</b>
+              </span>
+            ) : (
+              <a href="#" onClick={resendConfirmationEmail}>
+                Reenviar Email de Confirmación
+              </a>
+            )}
+          </Box>
+        )}
     </Section>
   );
 }

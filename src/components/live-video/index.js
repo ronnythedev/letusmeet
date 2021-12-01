@@ -157,6 +157,16 @@ const LiveVideoComponent = (props) => {
             // }
             setMeetingFinished(true);
           });
+        })
+        .catch((error) => {
+          setModalMessageTitle("No se puede iniciar reunión");
+          setModalMessageBody(
+            "No se puede tener acceso al audio y video del dispositivo. Sin estas capacidades la conexión no se puede establecer."
+          );
+          setModalMessageBody2(
+            "Asegúrese de que su dispositivo tiene audio y video y que se han otorgado los permisos para el uso de los mismos; luego, vuelva a intentar unirse a la reunión."
+          );
+          setShowMessageModal(true);
         });
     }
     history.replace("/live-video");
