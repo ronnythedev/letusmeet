@@ -118,9 +118,9 @@ function useAuthProvider() {
   };
 
   const updateEmail = (email) => {
-    return fakeAuth.updateEmail(email).then((rawUser) => {
-      setUser(rawUser);
-    });
+    // return fakeAuth.updateEmail(email).then((rawUser) => {
+    //   setUser(rawUser);
+    // });
   };
 
   const updatePassword = (password) => {
@@ -134,27 +134,23 @@ function useAuthProvider() {
   // Update auth user and persist to database (including any custom values in data)
   // Forms can call this function instead of multiple auth/db update functions
   const updateProfile = async (data) => {
-    const { email, name, picture } = data;
+    const { firstName, lastName } = data;
 
-    // Update auth email
-    if (email) {
-      await fakeAuth.updateEmail(email);
-    }
-
-    // Update auth profile fields
-    if (name || picture) {
-      let fields = {};
-      if (name) fields.name = name;
-      if (picture) fields.picture = picture;
-      await fakeAuth.updateProfile(fields);
-    }
-
-    // Persist all data to the database
-    await updateUser(user.uid, data);
-
-    // Update user in state
-    const currentUser = await fakeAuth.getCurrentUser();
-    setUser(currentUser);
+    return apiRequest("user/update-essential-info", "PATCH", {
+      firstName,
+      lastName,
+    })
+      .then((response) => {
+        if (response.code === undefined || response.code === 200) {
+          console.log("user returned: ", response.user);
+          setUser(response.user);
+        } else if (response.status === "error") {
+          throw new Error(response.message);
+        }
+      })
+      .catch((error) => {
+        throw new Error(error.message);
+      });
   };
 
   useEffect(() => {

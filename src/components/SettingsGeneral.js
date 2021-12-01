@@ -22,7 +22,7 @@ function SettingsGeneral(props) {
         // Set success status
         props.onStatus({
           type: "success",
-          message: "Your profile has been updated",
+          message: "Tu información se ha guardado con éxito",
         });
       })
       .catch((error) => {
@@ -95,6 +95,7 @@ function SettingsGeneral(props) {
             inputRef={register({
               required: "Please enter your email",
             })}
+            disabled={true}
           />
         </Grid>
         <Grid item={true} xs={12}>
